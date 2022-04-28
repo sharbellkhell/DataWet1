@@ -1,0 +1,3 @@
+C:/Users/thebo/CLionProjects/AVLTree/DataWet1/cmake-build-debug/CMakeFiles/AVLTree.dir
+C:/Users/thebo/CLionProjects/AVLTree/DataWet1/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/thebo/CLionProjects/AVLTree/DataWet1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
