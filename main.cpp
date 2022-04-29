@@ -32,37 +32,30 @@ void PrintTree(AVLTree<int,int>* root){
 int main() {
 
 
-//    std::cout << "Hello, World!" << std::endl;
-//    AVLTree<int,int>* n1 = init(1,5);
-//    AVLTree<int,int>* n2 = init(2,4, isLeft,n1);
-//    AVLTree<int,int>* n3 = init(3,2, isRight,n1);
-
-//    WHATIS(getHeight(n1))
-//    WHATIS(getHeight(n2))
-//    WHATIS(getHeight(n2->right))
-//    WHATIS(DoesNodeHaveChildren(n1))
-//
-//    PrintTree(n1);
-//    WHATIS(findNode(n1, 3)->key)
-
-//    root = insertNode(1,1,root);
-//    root = insertNode(6,1,root);
-//    root = insertNode(5,1,root);
-//    root = insertNode(4,1,root);
-//    root = insertNode(3,1,root);
-
-    AVLTree<int,int>* root = insertNode(1, 1);
-    root = insertNode(2,1,root);
-    root = insertNode(3,1,root);
-    root = insertNode(6,1,root);
-
-
-
-
+    AVLTree<int,int>* root = insertNode(367, 1);
+    root = insertNode(235,1,root);
+    root = insertNode(402,1,root);
+    root = insertNode(72,1,root);
+    root = insertNode(628,1,root);
+    root = insertNode(383,1,root);
+    root = insertNode(264,1,root);
+    root = insertNode(869,1,root);
+    root = insertNode(372,1,root);
+    root = insertNode(614,1,root);
+    root = insertNode(55,1,root);
+    root = insertNode(192,1,root);
+    root = insertNode(739,1,root);
+    root = insertNode(874,1,root);
+    root = insertNode(405,1,root);
+    root = insertNode(910,1,root);
+    root = insertNode(858,1,root);
+    root = insertNode(744,1,root);
+    root = insertNode(354,1,root);
+    root = insertNode(310,1,root);
 
     NEWLINE
     PrintTree(root);
-    WHATIS(findNode(root, 3)->key)
+    //WHATIS(findNode(root, 3)->key)
 
 
 

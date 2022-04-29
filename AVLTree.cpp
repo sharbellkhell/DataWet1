@@ -153,7 +153,7 @@ int getHeight(AVLTree<Key,Value>* node){
 
 template<class Key, class Value>
 int getBF( AVLTree<Key,Value>* node){
-    return(getHeight(node->left) - getHeight(node->right) );
+    return(updateHeight(node->left) - updateHeight(node->right) );
 
 }
 
@@ -187,7 +187,7 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
         }
     }
     AVLTree<Key,Value>* n1 = init(key, value, son_type, parent);
-    //fixUpwardPath(n1, Insert);
+    fixUpwardPath(n1, Insert);
     return getRoot(n1);
 }
 
@@ -202,7 +202,6 @@ void fixUpwardPathHeights(AVLTree<KeyType,ValueType>* node){
 
 template<class Key, class Value>
 void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
-    fixUpwardPathHeights(node);
     while( node != nullptr ) {
         if (getBF(node) == 2) {
             if (getBF(node->left) >= 0) {

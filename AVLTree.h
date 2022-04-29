@@ -83,15 +83,6 @@ AVLTree<Key,Value>* insertNode( const Key&, const Value&, AVLTree<Key,Value>* = 
 template<class Key,class Value>
 void deleteTree(AVLTree<Key,Value>*, const Key&);
 
-// Auxiliaries for the implementation of insert/delete
-
-
-/*
- * Updates heights from node up to root
- */
-template<class Key,class Value>
-void fixUpwardPathHeights(AVLTree<Key,Value>*);
-
 /*
  * fixUpwardPath
  * Performs the necessary rotations in the upward path from "node" to tree root
