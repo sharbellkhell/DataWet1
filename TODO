@@ -1,5 +1,2 @@
-
-1) sonType functionality is not maintained after rotations, is it necessary to maintain?
-    or is it enough on init
-
-2) init is probably not needed, currently used for debugging
+AVLTree DTOR
+key and value need to pointers to be able to free them
