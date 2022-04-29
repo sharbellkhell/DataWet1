@@ -11,7 +11,6 @@ struct AVLTree {
     AVLTree* left;
     AVLTree* right;
     int height;
-    int num_of_nodes;
 virtual ~AVLTree() = default; //TODO is default Dtor enough?
 
 
@@ -45,9 +44,13 @@ SonType whichSonIsNode(AVLTree<Key,Value>*);
 template<class Key,class Value>
 int RecursiveCalcHeight(AVLTree<Key,Value>*);
 
+// Returns height
+template<class Key, class Value>
+int getHeight(AVLTree<Key,Value>*);
+
 // Updates Height of Tree and returns it
 template<class Key,class Value>
-int getHeight(AVLTree<Key,Value>*);
+int updateHeight(AVLTree<Key,Value>*);
 
 /*
  * Performs Right Rotation, Returns the upmost Node after rotation
@@ -78,7 +81,7 @@ template<class Key,class Value>
 AVLTree<Key,Value>* insertNode( const Key&, const Value&, AVLTree<Key,Value>* = nullptr);
 
 template<class Key,class Value>
-void deleteNode(const Key&);
+void deleteTree(AVLTree<Key,Value>*, const Key&);
 
 // Auxiliaries for the implementation of insert/delete
 
@@ -94,16 +97,11 @@ void fixUpwardPathHeights(AVLTree<Key,Value>*);
  * Performs the necessary rotations in the upward path from "node" to tree root
  * if the function Insert; only one rotation is needed
  * if the function is Delete; Rotations are needed along all the Upward path
+ * returns upmost node after fix
  */
 enum Function {Delete, Insert};
 template<class Key,class Value>
 void fixUpwardPath(AVLTree<Key,Value>* , Function);
-
-
-
-
-
-
 
 
 #endif //AVLTREE_H

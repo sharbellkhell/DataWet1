@@ -5,7 +5,7 @@
 
 template<class Key, class Value>
 AVLTree<Key,Value>::AVLTree(const Key &key, const Value &value, AVLTree* parent)
- : key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0), num_of_nodes(0) {}
+ : key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0) {}
 
 template<class Key, class Value>
 AVLTree<Key,Value>* init(const Key &key, const Value &value,
@@ -22,7 +22,6 @@ AVLTree<Key,Value>* init(const Key &key, const Value &value,
         case root:
             break;
     }
-    n1->num_of_nodes++; //TODO This functionality could be unnecessary
     return n1;
     
 }
@@ -70,7 +69,7 @@ int RecursiveCalcHeight(AVLTree<Key,Value>* node) {
 }
 
 template<class Key, class Value>
-int getHeight(AVLTree<Key,Value>* node){
+int updateHeight(AVLTree<Key,Value>* node){
     if(node == nullptr) return -1;
     node->height = RecursiveCalcHeight(node);
     return (node->height);
@@ -85,10 +84,11 @@ AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
     SonType absolute_son_type = whichSonIsNode(A);
 
     AVLTree<Key,Value>* B = A->right;
-    assert(B); // TODO if reached assert, we are performing illegal rotation
+    assert(B); // if reached assert, we are performing illegal rotation
     AVLTree<Key,Value>* Bl = B->left;
     B->left = A;
     A->right = Bl;
+    A->parent = B;
 
     //relink with outside tree
     B->parent = absolute_parent;
@@ -114,11 +114,12 @@ AVLTree<Key,Value>* absolute_parent = B->parent;
 SonType absolute_son_type = whichSonIsNode(B);
 
 AVLTree<Key,Value>* A = B->left;
-assert(A); // TODO if reached assert, we are performing illegal rotation
+assert(A); // if reached assert, we are performing illegal rotation
 AVLTree<Key,Value>* Ar = A->right;
 //Ar = (A != nullptr ? A->right : nullptr);
 A->right = B;
 B->left = Ar;
+B->parent = A;
 // TODO probably need to update heights
 A->parent = absolute_parent;
 switch(absolute_son_type){
@@ -146,8 +147,22 @@ AVLTree<Key,Value>* findNode(AVLTree<Key,Value>* root , const Key& key){
 }
 
 template<class Key, class Value>
+int getHeight(AVLTree<Key,Value>* node){
+    return node ? node->height : -1 ;
+}
+
+template<class Key, class Value>
 int getBF( AVLTree<Key,Value>* node){
-    return(node->left->height - node->right->height );
+    return(getHeight(node->left) - getHeight(node->right) );
+
+}
+
+template<class Key, class Value>
+AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
+    while(node->parent != nullptr){
+        node = node->parent;
+    }
+    return node;
 }
 
 template<class Key,class Value>
@@ -159,10 +174,10 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
         throw NodeAlreadyExists();
     }
     AVLTree<Key,Value>* placement_pointer = root;
-    AVLTree<Key,Value>* parent = nullptr;
+    AVLTree<Key,Value>* parent = root->parent;
     SonType son_type = SonType::root;
     while(placement_pointer != nullptr && placement_pointer->key != key){
-        parent = placement_pointer->parent;
+        parent = placement_pointer;
         if(placement_pointer->key < key ){
             son_type = isRight;
             placement_pointer = placement_pointer->right;
@@ -172,16 +187,15 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
         }
     }
     AVLTree<Key,Value>* n1 = init(key, value, son_type, parent);
-    fixUpwardPath(n1, Insert);
-    root->num_of_nodes++;
-    return(n1);
+    //fixUpwardPath(n1, Insert);
+    return getRoot(n1);
 }
 
 template<class KeyType, class ValueType>
 void fixUpwardPathHeights(AVLTree<KeyType,ValueType>* node){
     AVLTree<KeyType,ValueType>* temp_node = node;
     while(temp_node != nullptr){
-        getHeight(temp_node);
+        updateHeight(temp_node);
         temp_node = temp_node->parent;
     }
 }
@@ -189,8 +203,7 @@ void fixUpwardPathHeights(AVLTree<KeyType,ValueType>* node){
 template<class Key, class Value>
 void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
     fixUpwardPathHeights(node);
-
-    while(node != nullptr ) {
+    while( node != nullptr ) {
         if (getBF(node) == 2) {
             if (getBF(node->left) >= 0) {
                 // ROTATE LL
@@ -216,8 +229,6 @@ void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
         }
         node = node->parent;
     }
-
-
 }
 
 
