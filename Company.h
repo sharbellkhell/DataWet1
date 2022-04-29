@@ -8,8 +8,8 @@ typedef enum {SUCCESS=0,EXISTS=1,DONT_EXIST=2,} Result;
 class Company{
     public:
         int companyId;
-        AVLTree<int,Employee*> workersId;
-        AVLTree<int,Employee*> workersSal;
+        AVLTree<int,Employee*>* workersId;
+        AVLTree<int,Employee*>* workersSal;
         int value;
         Company(int companyId, int value);
         ~Company() = default;

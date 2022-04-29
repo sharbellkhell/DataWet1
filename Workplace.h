@@ -14,9 +14,10 @@ typedef enum {
 
 class Workplace{
     public:
-        AVLTree<int ,Company> companies;
-        AVLTree<int,Employee*> employeeID;
-        AVLTree<int,Employee*> employeeSAL;
+        AVLTree<int, Company*> companies;
+        AVLTree<int, Employee*> employeeID;
+        AVLTree<int, Employee*> employeeSAL;
+        AVLTree<int, Company*> nonEmptyCompanies;
         Workplace();
         ~Workplace();
 };
