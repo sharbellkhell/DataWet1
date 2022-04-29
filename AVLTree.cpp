@@ -7,6 +7,7 @@ template<class Key, class Value>
 AVLTree<Key,Value>::AVLTree(const Key &key, const Value &value, AVLTree* parent)
  : key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0) {}
 
+
 template<class Key, class Value>
 AVLTree<Key,Value>* init(const Key &key, const Value &value,
               SonType son_type, AVLTree<Key,Value>* parent){
@@ -78,7 +79,6 @@ int updateHeight(AVLTree<Key,Value>* node){
 
 template<class Key,class Value>
 AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
-
     //The following two defs are needed to link nodes with outside tree after rotation
     AVLTree<Key,Value>* absolute_parent = A->parent;
     SonType absolute_son_type = whichSonIsNode(A);
@@ -93,43 +93,48 @@ AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
     //relink with outside tree
     B->parent = absolute_parent;
     switch(absolute_son_type){
-        case isLeft:
+        case isLeft:{
             absolute_parent->left = B;
             break;
-        case isRight:
+        }
+        case isRight:{
             absolute_parent->right = B;
             break;
-        case root:
+        }
+        case root:{
             break;
+        }
     }
     return B;
-
     // TODO probably need to update heights
 }
 
 
 template<class Key,class Value>
 AVLTree<Key,Value>* rotateRight(AVLTree<Key,Value>* B){
-AVLTree<Key,Value>* absolute_parent = B->parent;
-SonType absolute_son_type = whichSonIsNode(B);
+    AVLTree<Key,Value>* absolute_parent = B->parent;
+    SonType absolute_son_type = whichSonIsNode(B);
 
-AVLTree<Key,Value>* A = B->left;
-assert(A); // if reached assert, we are performing illegal rotation
-AVLTree<Key,Value>* Ar = A->right;
-//Ar = (A != nullptr ? A->right : nullptr);
-A->right = B;
-B->left = Ar;
-B->parent = A;
-// TODO probably need to update heights
-A->parent = absolute_parent;
-switch(absolute_son_type){
-    case isLeft:
-        absolute_parent->left = A;
-    case isRight:
-        absolute_parent->right = A;
-    case root: ;
-}
-return A;
+    AVLTree<Key,Value>* A = B->left;
+    assert(A); // if reached assert, we are performing illegal rotation
+    AVLTree<Key,Value>* Ar = A->right;
+    //Ar = (A != nullptr ? A->right : nullptr);
+    A->right = B;
+    B->left = Ar;
+    B->parent = A;
+    // TODO probably need to update heights
+    A->parent = absolute_parent;
+    switch(absolute_son_type){
+        case isLeft:{
+            absolute_parent->left = A;
+        }
+        case isRight:{
+            absolute_parent->right = A;
+        }
+        case root: {;
+        }
+    }
+    return A;
 }
 
 
@@ -228,6 +233,70 @@ void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
         }
         node = node->parent;
     }
+}
+
+template<class Key,class Value>
+void swapData(AVLTree<Key,Value>* A, AVLTree<Key, Value>* B){
+    Key temp_key = A->key;
+    Value temp_value = A->value;
+    A->key = B->key;
+    A->value = B->value;
+    B->key = temp_key;
+    B->value = temp_value;
+}
+
+template<class Key,class Value>
+AVLTree<Key,Value>* getSmallestNodeBiggerThan(AVLTree<Key,Value>* node){
+    AVLTree<Key,Value>* temp = node->right;
+    while(temp->left != nullptr){
+        temp = temp->left;
+    }
+    return temp;
+}
+
+template<class Key,class Value>
+void deleteNode(AVLTree<Key,Value>* root , const Key& key){
+    AVLTree<Key,Value>* to_remove = findNode(root,key);
+    if(to_remove == nullptr){
+        throw NodeDoesntExist();
+    }
+    AVLTree<Key,Value>* parent = to_remove->parent;
+    //TODO edge cases all functions
+    switch (DoesNodeHaveChildren(to_remove)) {
+        case Leaf: {
+            if (whichSonIsNode(to_remove) == isRight){
+                parent->right = nullptr;
+                to_remove->parent = nullptr;
+            } else if (whichSonIsNode(to_remove) == isLeft){
+                parent->left = nullptr;
+                to_remove->parent = nullptr;
+            }  //TODO what if root?
+            //TODO free(to_remove->key), free(to_remove->value)
+            break;
+        }
+        case HasRightSon: {
+            AVLTree<Key, Value> *right_son = to_remove->right;
+            swapData(to_remove, right_son);
+            deleteNode(right_son, right_son->key);
+            break;
+        }
+        case HasLeftSon: {
+            AVLTree<Key, Value> *left_son = to_remove->left;
+            swapData(to_remove, left_son);
+            deleteNode(left_son, left_son->key);
+            break;
+        }
+        case HasTwoSons: {
+            AVLTree<Key, Value> * next_node = getSmallestNodeBiggerThan(to_remove);
+            swapData(to_remove,next_node);
+            deleteNode(next_node, next_node->key);
+            break;
+        }
+
+
+    }
+    
+    
 }
 
 

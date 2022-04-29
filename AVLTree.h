@@ -11,9 +11,7 @@ struct AVLTree {
     AVLTree* left;
     AVLTree* right;
     int height;
-virtual ~AVLTree() = default; //TODO is default Dtor enough?
-
-
+ ~AVLTree();
 
 //private:
     AVLTree(const Key &key,
@@ -81,7 +79,7 @@ template<class Key,class Value>
 AVLTree<Key,Value>* insertNode( const Key&, const Value&, AVLTree<Key,Value>* = nullptr);
 
 template<class Key,class Value>
-void deleteTree(AVLTree<Key,Value>*, const Key&);
+void deleteNode(AVLTree<Key,Value>*, const Key&);
 
 /*
  * fixUpwardPath

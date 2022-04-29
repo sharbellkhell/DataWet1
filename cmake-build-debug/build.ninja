@@ -67,6 +67,12 @@ build CMakeFiles/AVLTree.dir/Auxilaries.cpp.obj: CXX_COMPILER__AVLTree_Debug C$:
   OBJECT_DIR = CMakeFiles\AVLTree.dir
   OBJECT_FILE_DIR = CMakeFiles\AVLTree.dir
 
+build CMakeFiles/AVLTree.dir/insert.cpp.obj: CXX_COMPILER__AVLTree_Debug C$:/Users/thebo/CLionProjects/AVLTree/DataWet1/insert.cpp || cmake_object_order_depends_target_AVLTree
+  DEP_FILE = CMakeFiles\AVLTree.dir\insert.cpp.obj.d
+  FLAGS = -g -std=gnu++11
+  OBJECT_DIR = CMakeFiles\AVLTree.dir
+  OBJECT_FILE_DIR = CMakeFiles\AVLTree.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target AVLTree
@@ -75,7 +81,7 @@ build CMakeFiles/AVLTree.dir/Auxilaries.cpp.obj: CXX_COMPILER__AVLTree_Debug C$:
 #############################################
 # Link the executable AVLTree.exe
 
-build AVLTree.exe: CXX_EXECUTABLE_LINKER__AVLTree_Debug CMakeFiles/AVLTree.dir/AVLTree.cpp.obj CMakeFiles/AVLTree.dir/main.cpp.obj CMakeFiles/AVLTree.dir/Auxilaries.cpp.obj
+build AVLTree.exe: CXX_EXECUTABLE_LINKER__AVLTree_Debug CMakeFiles/AVLTree.dir/AVLTree.cpp.obj CMakeFiles/AVLTree.dir/main.cpp.obj CMakeFiles/AVLTree.dir/Auxilaries.cpp.obj CMakeFiles/AVLTree.dir/insert.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\AVLTree.dir

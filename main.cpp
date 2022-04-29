@@ -4,6 +4,7 @@
 #include <string>
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 #define NEWLINE std::cout << std::endl;
+#include <random>
 
 
 
@@ -31,27 +32,41 @@ void PrintTree(AVLTree<int,int>* root){
 
 int main() {
 
-
+//
     AVLTree<int,int>* root = insertNode(367, 1);
-    root = insertNode(235,1,root);
-    root = insertNode(402,1,root);
-    root = insertNode(72,1,root);
-    root = insertNode(628,1,root);
-    root = insertNode(383,1,root);
-    root = insertNode(264,1,root);
-    root = insertNode(869,1,root);
-    root = insertNode(372,1,root);
-    root = insertNode(614,1,root);
-    root = insertNode(55,1,root);
-    root = insertNode(192,1,root);
-    root = insertNode(739,1,root);
-    root = insertNode(874,1,root);
-    root = insertNode(405,1,root);
-    root = insertNode(910,1,root);
-    root = insertNode(858,1,root);
-    root = insertNode(744,1,root);
-    root = insertNode(354,1,root);
-    root = insertNode(310,1,root);
+//    root = insertNode(235,1,root);
+//    root = insertNode(402,1,root);
+//    root = insertNode(72,1,root);
+//    root = insertNode(628,1,root);
+//    root = insertNode(383,1,root);
+//    root = insertNode(264,1,root);
+//    root = insertNode(869,1,root);
+//    root = insertNode(372,1,root);
+//    root = insertNode(614,1,root);
+//    root = insertNode(55,1,root);
+//    root = insertNode(192,1,root);
+//    root = insertNode(739,1,root);
+//    root = insertNode(874,1,root);
+//    root = insertNode(405,1,root);
+//    root = insertNode(910,1,root);
+//    root = insertNode(858,1,root);
+//    root = insertNode(744,1,root);
+//    root = insertNode(354,1,root);
+//    root = insertNode(310,1,root);
+
+    for(int i = 0; i < 20 ; i++){
+        int num = rand() % 1000 - 100;
+        root = insertNode(num + i,1,root);
+    }
+    root = insertNode(1000,1,root);
+    root = insertNode(1100,1,root);
+    root = insertNode(1200,1,root);
+    root = insertNode(1300,1,root);
+    deleteNode(root,629);
+
+
+
+
 
     NEWLINE
     PrintTree(root);
