@@ -11,9 +11,12 @@ class Company{
         AVLTree<int,Employee*>* workersId;
         AVLTree<int,Employee*>* workersSal;
         int value;
+        bool empty;
         Company(int companyId, int value);
         ~Company() = default;
         Result AddEmp(Employee* emp);
         Result RemoveEmp(int id);
 };
+
+Employee* highestEarner(Company* company);//returns the highest earner in the company
 #endif
