@@ -42,10 +42,6 @@ SonType whichSonIsNode(AVLTree<Key,Value>*);
 template<class Key,class Value>
 int RecursiveCalcHeight(AVLTree<Key,Value>*);
 
-// Returns height
-template<class Key, class Value>
-int getHeight(AVLTree<Key,Value>*);
-
 // Updates Height of Tree and returns it
 template<class Key,class Value>
 int updateHeight(AVLTree<Key,Value>*);
@@ -77,6 +73,15 @@ int getBF( AVLTree<Key,Value>* );
  */
 template<class Key,class Value>
 AVLTree<Key,Value>* insertNode( const Key&, const Value&, AVLTree<Key,Value>* = nullptr);
+
+template<class Key,class Value>
+AVLTree<Key,Value>* getSmallestNodeBiggerThan(AVLTree<Key,Value>*);
+
+template<class Key, class Value>
+AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node);
+
+template<class Key,class Value>
+void swapData(AVLTree<Key,Value>*, AVLTree<Key, Value>*);
 
 template<class Key,class Value>
 void deleteNode(AVLTree<Key,Value>*, const Key&);

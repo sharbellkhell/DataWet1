@@ -1,6 +1,7 @@
 #include "AVLTree.h"
 #include "Auxilaries.h"
 #include <assert.h>
+#include <iostream>
 
 
 template<class Key, class Value>
@@ -127,11 +128,13 @@ AVLTree<Key,Value>* rotateRight(AVLTree<Key,Value>* B){
     switch(absolute_son_type){
         case isLeft:{
             absolute_parent->left = A;
+            break;
         }
         case isRight:{
             absolute_parent->right = A;
+            break;
         }
-        case root: {;
+        case root: {break;
         }
     }
     return A;
@@ -151,10 +154,10 @@ AVLTree<Key,Value>* findNode(AVLTree<Key,Value>* root , const Key& key){
     return iterator_node;
 }
 
-template<class Key, class Value>
-int getHeight(AVLTree<Key,Value>* node){
-    return node ? node->height : -1 ;
-}
+//template<class Key, class Value>
+//int getHeight(AVLTree<Key,Value>* node){
+//    return node ? node->height : -1 ;
+//}
 
 template<class Key, class Value>
 int getBF( AVLTree<Key,Value>* node){
@@ -169,6 +172,7 @@ AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
     }
     return node;
 }
+#define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 
 template<class Key,class Value>
 AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root){
@@ -178,6 +182,11 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
     if(findNode(root, key) != nullptr){
         throw NodeAlreadyExists();
     }
+    if(validCheck(root)){
+        WHATIS(key)
+        WHATIS(value)
+        WHATIS(root->key)
+    }//TODO DEBUG
     AVLTree<Key,Value>* placement_pointer = root;
     AVLTree<Key,Value>* parent = root->parent;
     SonType son_type = SonType::root;
@@ -196,19 +205,12 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
     return getRoot(n1);
 }
 
-template<class KeyType, class ValueType>
-void fixUpwardPathHeights(AVLTree<KeyType,ValueType>* node){
-    AVLTree<KeyType,ValueType>* temp_node = node;
-    while(temp_node != nullptr){
-        updateHeight(temp_node);
-        temp_node = temp_node->parent;
-    }
-}
 
 template<class Key, class Value>
 void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
     while( node != nullptr ) {
-        if (getBF(node) == 2) {
+        int root_bf = getBF(node);
+        if (root_bf == 2) {
             if (getBF(node->left) >= 0) {
                 // ROTATE LL
                 node = rotateRight(node);
@@ -219,7 +221,7 @@ void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
                 node = rotateRight(node);
                 if(function == Insert) { break; }
             }
-        } else if (getBF(node) == -2) {
+        } else if (root_bf == -2) {
             if (getBF(node->right) == 1) {
                 // ROTATE RL
                 rotateRight(node->right);
@@ -266,37 +268,40 @@ void deleteNode(AVLTree<Key,Value>* root , const Key& key){
         case Leaf: {
             if (whichSonIsNode(to_remove) == isRight){
                 parent->right = nullptr;
-                to_remove->parent = nullptr;
             } else if (whichSonIsNode(to_remove) == isLeft){
                 parent->left = nullptr;
-                to_remove->parent = nullptr;
             }  //TODO what if root?
             //TODO free(to_remove->key), free(to_remove->value)
+            fixUpwardPath(to_remove, Delete);
             break;
         }
         case HasRightSon: {
             AVLTree<Key, Value> *right_son = to_remove->right;
             swapData(to_remove, right_son);
             deleteNode(right_son, right_son->key);
+            fixUpwardPath(right_son, Delete);
             break;
         }
         case HasLeftSon: {
             AVLTree<Key, Value> *left_son = to_remove->left;
             swapData(to_remove, left_son);
             deleteNode(left_son, left_son->key);
+            fixUpwardPath(left_son, Delete);
             break;
         }
         case HasTwoSons: {
             AVLTree<Key, Value> * next_node = getSmallestNodeBiggerThan(to_remove);
             swapData(to_remove,next_node);
             deleteNode(next_node, next_node->key);
+            fixUpwardPath(next_node, Delete);
             break;
         }
-
-
     }
-    
-    
+    //fixUpwardPath(to_remove, Delete);
+
+
+
+
 }
 
 
