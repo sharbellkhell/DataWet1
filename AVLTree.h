@@ -11,7 +11,10 @@ struct AVLTree {
     AVLTree* left;
     AVLTree* right;
     int height;
- ~AVLTree() = default;
+ ~AVLTree(){
+     //delete(key);
+     //delete(value);
+ }
 
 //private:
     AVLTree(const Key &key,

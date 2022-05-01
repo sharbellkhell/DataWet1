@@ -171,13 +171,10 @@ int getBF( AVLTree<Key,Value>* node){
 
 template<class Key, class Value>
 AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
-    if(node == nullptr){
-        return nullptr;
-    } 
-    while(node->parent != nullptr){
-        node = node->parent;
+    if(node->parent == nullptr){
+        return node;
     }
-    return node;
+    return (getRoot(node->parent));
 }
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 
@@ -271,23 +268,27 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
     // and it's parent
     AVLTree<Key,Value>* new_parent = to_remove->parent;
     AVLTree<Key,Value>* swap_with = to_remove;
+    AVLTree<Key,Value>* new_root;
     switch(DoesNodeHaveChildren(to_remove)){
         case HasTwoSons:{
             swap_with = getSmallestNodeBiggerThan(to_remove);
             swapData(to_remove, swap_with);
             removeNode(swap_with,swap_with->key);
+            new_root = getRoot(to_remove);
             break;
         }
         case HasRightSon: {
             swap_with = to_remove->right;
             swapData(to_remove, swap_with);
             removeNode(swap_with,swap_with->key);
+            new_root = getRoot(to_remove);
             break;
         }
         case HasLeftSon: {
             swap_with = to_remove->left;
             swapData(to_remove, swap_with);
             removeNode(swap_with,swap_with->key);
+            new_root = getRoot(to_remove);
             break;
         }
         case Leaf:
@@ -296,11 +297,12 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
             } else if (whichSonIsNode(to_remove) == isLeft){
                 new_parent->left = nullptr;
             }
-            delete(to_remove);
+            fixUpwardPath(to_remove, Delete);
+            new_root = getRoot(to_remove);
+            free(to_remove);
             break; //TODO memory isn't being freed
     }
-    fixUpwardPath(new_parent, Delete);
-    return getRoot(new_parent);
+    return new_root;
 }
 
 
@@ -311,7 +313,7 @@ void Quit(AVLTree<Key,Value>* root){
     }
     Quit(root->right);
     Quit(root->left);
-    delete(root);
+    free(root);
 }
 
 

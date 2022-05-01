@@ -109,7 +109,7 @@ int main() {
     root= removeNode(root,103);
     root= removeNode(root,2);
     root= removeNode(root,104);
-    std::cout <<root->key<< "tesst";
+    //std::cout <<root->key<< "tesst";
 
     NEWLINE
     PrintTree(root);
