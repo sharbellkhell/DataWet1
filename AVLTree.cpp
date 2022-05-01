@@ -278,14 +278,14 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
         }
         case HasRightSon: {
             swap_with = to_remove->right;
-            to_remove->parent->right = swap_with;
-            swap_with->parent = new_parent;
+            swapData(to_remove, swap_with);
+            removeNode(swap_with,swap_with->key);
             break;
         }
         case HasLeftSon: {
             swap_with = to_remove->left;
-            to_remove->parent->left = swap_with;
-            swap_with->parent = new_parent;
+            swapData(to_remove, swap_with);
+            removeNode(swap_with,swap_with->key);
             break;
         }
         case Leaf:
