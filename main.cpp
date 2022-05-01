@@ -5,7 +5,6 @@
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 #define NEWLINE std::cout << std::endl;
 #include <random>
-#include "remove.cpp"
 
 
 
@@ -104,24 +103,14 @@ int main() {
     root = insertNode(1100,1,root);
     root = insertNode(1200,1,root);
     root = insertNode(1300,1,root);
-    root = recursiveRemove(root, 629);
-    root = recursiveRemove(root, 403);
+    root = removeNode(root, 629);
+    root = removeNode(root, 403);
 
 
     NEWLINE
-    //PrintTree(root);
-    //PrintTreeText(root);
-    //isAVL(root);
-
-
-
-
-
-
-
-
-
-
+    PrintTree(root);
+    PrintTreeText(root);
+    isAVL(root);
 
     return 0;
 

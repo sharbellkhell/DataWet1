@@ -90,7 +90,9 @@ AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
     B->left = A;
     A->right = Bl;
     A->parent = B;
-
+    if(Bl != nullptr) {
+        Bl->parent = A;
+    }
     //relink with outside tree
     B->parent = absolute_parent;
     switch(absolute_son_type){
@@ -123,6 +125,9 @@ AVLTree<Key,Value>* rotateRight(AVLTree<Key,Value>* B){
     A->right = B;
     B->left = Ar;
     B->parent = A;
+    if(Ar != nullptr){
+        Ar->parent = B;
+    }
     // TODO probably need to update heights
     A->parent = absolute_parent;
     switch(absolute_son_type){
@@ -182,11 +187,6 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
     if(findNode(root, key) != nullptr){
         throw NodeAlreadyExists();
     }
-    if(validCheck(root)){
-        WHATIS(key)
-        WHATIS(value)
-        WHATIS(root->key)
-    }//TODO DEBUG
     AVLTree<Key,Value>* placement_pointer = root;
     AVLTree<Key,Value>* parent = root->parent;
     SonType son_type = SonType::root;
@@ -256,52 +256,48 @@ AVLTree<Key,Value>* getSmallestNodeBiggerThan(AVLTree<Key,Value>* node){
     return temp;
 }
 
-template<class Key,class Value>
-void deleteNode(AVLTree<Key,Value>* root , const Key& key){
+template<class Key, class Value>
+AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
+    if(root == nullptr){
+        return nullptr;
+    }
     AVLTree<Key,Value>* to_remove = findNode(root,key);
     if(to_remove == nullptr){
         throw NodeDoesntExist();
     }
-    AVLTree<Key,Value>* parent = to_remove->parent;
-    //TODO edge cases all functions
-    switch (DoesNodeHaveChildren(to_remove)) {
-        case Leaf: {
-            if (whichSonIsNode(to_remove) == isRight){
-                parent->right = nullptr;
-            } else if (whichSonIsNode(to_remove) == isLeft){
-                parent->left = nullptr;
-            }  //TODO what if root?
-            //TODO free(to_remove->key), free(to_remove->value)
-            fixUpwardPath(to_remove, Delete);
+    // These nodes will store the node we will swap to_remove with,
+    // and it's parent
+    AVLTree<Key,Value>* new_parent = to_remove->parent;
+    AVLTree<Key,Value>* swap_with = to_remove;
+    switch(DoesNodeHaveChildren(to_remove)){
+        case HasTwoSons:{
+            swap_with = getSmallestNodeBiggerThan(to_remove);
+            swapData(to_remove, swap_with);
+            removeNode(swap_with,swap_with->key);
             break;
         }
         case HasRightSon: {
-            AVLTree<Key, Value> *right_son = to_remove->right;
-            swapData(to_remove, right_son);
-            deleteNode(right_son, right_son->key);
-            fixUpwardPath(right_son, Delete);
+            swap_with = to_remove->right;
+            to_remove->parent->right = swap_with;
+            swap_with->parent = new_parent;
             break;
         }
         case HasLeftSon: {
-            AVLTree<Key, Value> *left_son = to_remove->left;
-            swapData(to_remove, left_son);
-            deleteNode(left_son, left_son->key);
-            fixUpwardPath(left_son, Delete);
+            swap_with = to_remove->left;
+            to_remove->parent->left = swap_with;
+            swap_with->parent = new_parent;
             break;
         }
-        case HasTwoSons: {
-            AVLTree<Key, Value> * next_node = getSmallestNodeBiggerThan(to_remove);
-            swapData(to_remove,next_node);
-            deleteNode(next_node, next_node->key);
-            fixUpwardPath(next_node, Delete);
-            break;
-        }
+        case Leaf:
+            if (whichSonIsNode(to_remove) == isRight){
+                new_parent->right = nullptr;
+            } else if (whichSonIsNode(to_remove) == isLeft){
+                new_parent->left = nullptr;
+            }
+            break; //TODO memory isn't being freed
     }
-    //fixUpwardPath(to_remove, Delete);
-
-
-
-
+    fixUpwardPath(to_remove, Delete);
+    return getRoot(to_remove);
 }
 
 

@@ -83,8 +83,8 @@ AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node);
 template<class Key,class Value>
 void swapData(AVLTree<Key,Value>*, AVLTree<Key, Value>*);
 
-template<class Key,class Value>
-void deleteNode(AVLTree<Key,Value>*, const Key&);
+template<class Key, class Value>
+AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key);
 
 /*
  * fixUpwardPath
