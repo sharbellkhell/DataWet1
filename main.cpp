@@ -89,28 +89,34 @@ void PrintTreeText(AVLTree<int,int>* root){
 int main() {
 
 //
-    AVLTree<int,int>* root = insertNode(367, 1);
-
-
-    for(int i = 0; i < 20 ; i++){
-        int num = rand() % 1000 - 100;
-        root = insertNode(num + i,1,root);
-
-        std::cout << std::endl;
-
-    }
-    root = insertNode(1000,1,root);
-    root = insertNode(1100,1,root);
-    root = insertNode(1200,1,root);
-    root = insertNode(1300,1,root);
-    root = removeNode(root, 629);
-    root = removeNode(root, 403);
-
+    AVLTree<int,int>* root = insertNode(1, 1);
+    root = insertNode(50,1,root);
+    root = insertNode(100,1,root);
+    root = insertNode(99,1,root);
+    root = insertNode(102,1,root);
+    root = insertNode(2,1,root);
+    root = insertNode(103,1,root);
+    root = insertNode(104,1,root);
+    root = insertNode(11,1,root);
+    root = insertNode(105,1,root);
+    root = insertNode(106,1,root);
+    root = insertNode(107,1,root);
+    root = insertNode(7,1,root);
+    root = insertNode(108,1,root);
+    root = insertNode(109,1,root);
+    root = insertNode(110,1,root);
+    root = insertNode(10,1,root);
+    root= removeNode(root,103);
+    root= removeNode(root,2);
+    root= removeNode(root,104);
+    std::cout <<root->key<< "tesst";
 
     NEWLINE
     PrintTree(root);
     PrintTreeText(root);
     isAVL(root);
+    
+    Quit(root);
 
     return 0;
 

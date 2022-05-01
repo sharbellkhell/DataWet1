@@ -11,7 +11,7 @@ struct AVLTree {
     AVLTree* left;
     AVLTree* right;
     int height;
- ~AVLTree();
+ ~AVLTree() = default;
 
 //private:
     AVLTree(const Key &key,
@@ -96,6 +96,12 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key);
 enum Function {Delete, Insert};
 template<class Key,class Value>
 void fixUpwardPath(AVLTree<Key,Value>* , Function);
+
+//AVLTree<Key,Value>*[] storeTreeInArray;
+
+//template<class Key, class Value>
+template<class Key,class Value>
+void Quit(AVLTree<Key,Value>* root);
 
 
 #endif //AVLTREE_H

@@ -159,19 +159,21 @@ AVLTree<Key,Value>* findNode(AVLTree<Key,Value>* root , const Key& key){
     return iterator_node;
 }
 
-//template<class Key, class Value>
-//int getHeight(AVLTree<Key,Value>* node){
-//    return node ? node->height : -1 ;
-//}
 
 template<class Key, class Value>
 int getBF( AVLTree<Key,Value>* node){
+    if(node == nullptr){
+        return 0;
+    } 
     return(updateHeight(node->left) - updateHeight(node->right) );
 
 }
 
 template<class Key, class Value>
 AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
+    if(node == nullptr){
+        return nullptr;
+    } 
     while(node->parent != nullptr){
         node = node->parent;
     }
@@ -294,10 +296,22 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
             } else if (whichSonIsNode(to_remove) == isLeft){
                 new_parent->left = nullptr;
             }
+            delete(to_remove);
             break; //TODO memory isn't being freed
     }
-    fixUpwardPath(to_remove, Delete);
-    return getRoot(to_remove);
+    fixUpwardPath(new_parent, Delete);
+    return getRoot(new_parent);
+}
+
+
+template<class Key,class Value>
+void Quit(AVLTree<Key,Value>* root){
+    if(root == nullptr){
+        return;
+    }
+    Quit(root->right);
+    Quit(root->left);
+    delete(root);
 }
 
 
