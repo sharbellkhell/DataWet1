@@ -395,8 +395,9 @@ AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* t
     // mergeTwoSortedArrays Allocates memory for merged_array,
     // meaning we can free what we allocated above
     free(array_a); free(array_b); free(a_index); free(b_index);
-    convertArrayToAVL(merged_array, 0, a_size+b_size);
+    AVLTree<Key,Value>* result_AVL = convertArrayToAVL(merged_array, 0, a_size+b_size);
     free(merged_array);
+    return result_AVL;
 }
 
 
