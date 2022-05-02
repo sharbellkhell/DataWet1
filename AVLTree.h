@@ -73,6 +73,10 @@ int getBF( AVLTree<Key,Value>* );
 
 /*
  * Inserts node into tree and performs required rotations
+ * Exceptions:
+ * std::bad_alloc
+ * InvalidInput
+ * NodeAlreadyExists
  */
 template<class Key,class Value>
 AVLTree<Key,Value>* insertNode( const Key&, const Value&, AVLTree<Key,Value>* = nullptr);
@@ -86,6 +90,12 @@ AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node);
 template<class Key,class Value>
 void swapData(AVLTree<Key,Value>*, AVLTree<Key, Value>*);
 
+/*
+ * Removes node from tree and performs required rotations
+ * Exceptions:
+ * InvalidInput
+ * NodeDoesntExist
+ */
 template<class Key, class Value>
 AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key);
 

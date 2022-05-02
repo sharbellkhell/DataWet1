@@ -176,12 +176,14 @@ AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
     }
     return (getRoot(node->parent));
 }
-#define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 
 template<class Key,class Value>
 AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root){
     if(root == nullptr){
         return init(key, value);
+    }
+    if(key <= 0 || value == nullptr){
+        throw InvalidInput();
     }
     if(findNode(root, key) != nullptr){
         throw NodeAlreadyExists();
@@ -257,8 +259,8 @@ AVLTree<Key,Value>* getSmallestNodeBiggerThan(AVLTree<Key,Value>* node){
 
 template<class Key, class Value>
 AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
-    if(root == nullptr){
-        return nullptr;
+    if(key <= 0 || root == nullptr){
+        throw InvalidInput();
     }
     AVLTree<Key,Value>* to_remove = findNode(root,key);
     if(to_remove == nullptr){
