@@ -101,73 +101,26 @@ template<class Key,class Value>
 void fixUpwardPath(AVLTree<Key,Value>* , Function);
 
 
-template<class Key,class Value>
-void Quit(AVLTree<Key,Value>* root);
-
 template<class Key, class Value>
 void arrayInOrder(AVLTree<Key,Value>* starting_point, int* index,
-                  AVLTree<Key,Value>** arr){
-    if(starting_point == nullptr){
-        return;
-    }
-    // Call left first
-    arrayInOrder(starting_point->left, index, arr);
-    // Store root
-    arr[*index] = starting_point;
-    // Call right last with incremented index
-    (*index)++;
-    arrayInOrder(starting_point->right, index, arr);
-}
+                  AVLTree<Key,Value>** arr);
 
 template<class Key,class Value>
 AVLTree<Key, Value>** mergeTwoSortedArrays(AVLTree<Key, Value>** array_a,
                                            AVLTree<Key, Value>** array_b,
-                                           int a_size, int b_size){
-
-    // TODO FREE AFTER
-    AVLTree<Key, Value>** merged_array = new AVLTree<Key, Value>*[a_size+b_size];
-    int a_index = 0;
-    int b_index = 0;
-    int merged_index = 0;
-    while(a_index < a_size && b_index < b_size){
-        if(array_a[a_index]->key < array_b[b_index]->key){
-            merged_array[merged_index++] = array_a[a_index++];
-        }
-        else{
-            merged_array[merged_index++] = array_b[b_index++];
-        }
-    }
-    // if there's elements left in array_a
-    while(a_index < a_size){
-        merged_array[merged_index++] == array_a[a_index++];
-    }
-    // if there's elements left in array_b
-    while(b_index < b_size){
-        merged_array[merged_index++] == array_b[b_index++];
-    }
-    return merged_array;
-}
+                                           int a_size, int b_size);
 
 template<class Key, class Value>
-AVLTree<Key, Value>* recursiveConvertArrayToAVL(AVLTree<Key, Value>** arr,
+AVLTree<Key, Value>* convertArrayToAVL(AVLTree<Key, Value>** arr,
                                        int start_point,
-                                       int end_point){
+                                       int end_point);
 
-    // We take the middle element of the array and place it as root
-    int root_index = (start_point + end_point) / 2;
-    AVLTree<Key,Value>* root = init<Key,Value>(arr[root_index]->key,
-                                              arr[root_index]->value);
-    // Use the lower-half of the array to build the left of root
-    root->left = recursiveConvertArrayToAVL(arr, start_point, root_index-1);
-    root->left->parent = root;
-    // Use the upper-half of the array to build the right of root
-    root->right = recursiveConvertArrayToAVL(arr, root_index+1, end_point);
-    root->right->parent = root;
-
-    return root;
-}
+template<class Key, class Value>
+AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>*, AVLTree<Key,Value>*);
 
 
+template<class Key,class Value>
+void Quit(AVLTree<Key,Value>* root);
 
 
 #endif //AVLTREE_H
