@@ -1,2 +1,5 @@
 AVLTree DTOR
 key and value need to pointers to be able to free them
+convert all frees to deletes, after configuring a suitable dtor that doesnt also delete parent, left, right
+test mergeTrees function and inOrder
+Dry
