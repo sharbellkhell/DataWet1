@@ -3,6 +3,12 @@
 #include "AVLTree.h"
 #include "Employee.h"
 
+typedef enum {
+    SUCCESS = 0,
+    ALREADY_EXIST=1,
+    DOES_NOT_EXIST=2,
+    INVALID_INPUT=3
+} Result;
 
 class Company{
     public:
@@ -12,10 +18,15 @@ class Company{
         int value;
         bool empty;
         Employee* highest_earner;
-        Company(int companyId, int value);
+        Company(int company_id,int value) : companyId(company_id),empty(true),value(value) {
+        workersId = nullptr;
+        workersSal = nullptr;
+        highest_earner=nullptr;
+        }
         ~Company() = default;
-        void AddEmployee(Employee* employee);
-        void RemoveEmployeeByID(int employee_id);
+        void func();
+        Result AddEmployee(Employee* emp);
+        Result RemoveEmployeeByID(const int employee_id);
 };
 
 #endif

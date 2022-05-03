@@ -1,5 +1,8 @@
 #include <iostream>
 #include "AVLTree.h"
+#include "Company.h"
+#include "Company.cpp"
+#include "Employee.h"
 #include "AVLTree.cpp"
 #include <string>
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
@@ -85,11 +88,18 @@ void PrintTreeText(AVLTree<int,int>* root){
     PrintTreeText(root->right);
 }
 
-
+void print_keys(AVLTree<int,Employee*>* comp)
+{
+    if(comp==nullptr)
+        return;
+    std::cout<<comp->key<<"\n";
+    print_keys(comp->left);
+    print_keys(comp->right);
+}
 int main() {
 
 //
-    AVLTree<int,int>* root = insertNode(1, 1);
+  /*  AVLTree<int,int>* root = insertNode(1, 1);
     root = insertNode(50,1,root);
     root = insertNode(100,1,root);
     root = insertNode(99,1,root);
@@ -109,15 +119,41 @@ int main() {
     root= removeNode(root,103);
     root= removeNode(root,2);
     root= removeNode(root,104);
+
+    AVLTree<int,int>* root2 = insertNode(14, 1);
+    root2 = insertNode(5,1,root2);
+    root2 = insertNode(1000,1,root2);
+    root2 = insertNode(9,1,root2);
+    root2 = insertNode(12,1,root2);
+    root2 = insertNode(21,1,root2);
+    root2 = insertNode(3,1,root2);
     //std::cout <<root->key<< "tesst";
 
     NEWLINE
+    std::cout<<"first\n";
     PrintTree(root);
-    PrintTreeText(root);
-    isAVL(root);
+    std::cout<<"second\n";
+    PrintTree(root2);
+    
+    /*AVLTree<int,int>* merge=mergeTrees(root,root2,13,7);
+    std::cout<<"merged\n";
+    PrintTree(merge);
+    //PrintTreeText(root);
+    //isAVL(root);
     
     Quit(root);
-
+*/
+    Company intel=Company(1,100);
+    Employee sam=Employee(300,1,10000,1);
+    Employee ben=Employee(305,1,11000,1);
+    Employee alex=Employee(350,1,10001,1);
+    Employee steve=Employee(320,1,12000,1);
+    intel.AddEmployee(&sam);
+    intel.AddEmployee(&ben);
+    intel.AddEmployee(&alex);
+    intel.AddEmployee(&steve);
+    intel.RemoveEmployeeByID(320);
+    std::cout<<intel.highest_earner->EmployeeId<<" is the highest earner with "<<intel.highest_earner->salary<<"\n";
     return 0;
 
 

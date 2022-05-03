@@ -1,7 +1,9 @@
 #include "Workplace.h"
 #include "AVLTree.h"
+#include "Company.h"
 #include <ostream>
 
-Workplace::Workplace(){
-    this->companies=AVLTree::init(1,nullptr);
+Workplace::Workplace():companies(){
+    this->companies=new AVLTree<int, Company*>(1,nullptr);
+
 }
