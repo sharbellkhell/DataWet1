@@ -3,6 +3,7 @@
 #include "Company.h"
 #include "Company.cpp"
 #include "Employee.h"
+#include "Employee.cpp"
 #include "AVLTree.cpp"
 #include <string>
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
@@ -152,8 +153,14 @@ int main() {
     intel.AddEmployee(&ben);
     intel.AddEmployee(&alex);
     intel.AddEmployee(&steve);
-    intel.RemoveEmployeeByID(320);
     std::cout<<intel.highest_earner->EmployeeId<<" is the highest earner with "<<intel.highest_earner->salary<<"\n";
+    int num1=0;
+    int num2=0;
+    int* v=&num1;
+    int* c=&num2;
+    intel.CompanyInfo(v,c);
+    intel.RemoveEmployeeByID(320);
+    std::cout<<*v<<" "<<*c;
     return 0;
 
 

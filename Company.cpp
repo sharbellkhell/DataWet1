@@ -3,9 +3,6 @@
 #include <iostream>
 
 
-void Company::func(){
-    std::cout<<"hello\n";
-}
 Result Company::AddEmployee(Employee* emp){
     try{
     this->workersId = insertNode(emp->EmployeeId, emp,this->workersId);
@@ -30,7 +27,7 @@ Result Company::AddEmployee(Employee* emp){
         else
             this->highest_earner=emp;
     }
-    this->empty = false;
+    this->employee_count++;
     return SUCCESS;
 
 }
@@ -51,7 +48,19 @@ Result Company::RemoveEmployeeByID(const int employee_id)
     this->workersSal=removeNode(this->workersSal,sal_to_remove);
     if(this->highest_earner->EmployeeId==employee_id)
         this->highest_earner=find_highest_earner(this);
+    this->employee_count--;
     return SUCCESS;
+}
+
+void Company::CompanyInfo(int* v,int* c)
+{//send pointer to local ints i.e. int num1=0,int* v=&num1 and then CompanyInfo(v..)
+    *v=this->value;
+    *c=this->employee_count;
+}
+
+void Company::setValue(const int value)
+{
+    this->value=value;
 }
 
 

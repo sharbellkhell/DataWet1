@@ -16,17 +16,18 @@ class Company{
         AVLTree<int,Employee*>* workersId;
         AVLTree<int,Employee*>* workersSal;
         int value;
-        bool empty;
+        int employee_count;
         Employee* highest_earner;
-        Company(int company_id,int value) : companyId(company_id),empty(true),value(value) {
+        Company(int company_id,int value) : companyId(company_id),value(value),employee_count(0) {
         workersId = nullptr;
         workersSal = nullptr;
         highest_earner=nullptr;
         }
         ~Company() = default;
-        void func();
         Result AddEmployee(Employee* emp);
         Result RemoveEmployeeByID(const int employee_id);
+        void CompanyInfo(int* value,int* num_of_employee);
+        void setValue(const int value);
 };
 
 #endif
