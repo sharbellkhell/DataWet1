@@ -132,6 +132,9 @@ template<class Key,class Value>
 void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys);
 
 template<class Key,class Value>
+void lowest_to_highest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys);
+
+template<class Key,class Value>
 void Quit(AVLTree<Key,Value>* root);
 
 

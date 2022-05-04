@@ -163,7 +163,6 @@ int main() {
     std::cout<<*v<<" "<<*c;
     int* ids=new int[intel.employee_count];
     int** idss=&ids;
-    ids[1]=100;
     int count=0;
     int* cc=&count;
     intel.PrintEmployees();

@@ -77,7 +77,7 @@ void Company::PrintEmployees() const
 {   
     std::cout<<this->companyId<<"'s workers: \n ID: \n";
     printTreeInternal(this->workersId, "", true);
-     std::cout<<"Salaries: \n";
+    std::cout<<"Salaries: \n";
     printTreeInternal(this->workersSal, "", true);
 }
 
