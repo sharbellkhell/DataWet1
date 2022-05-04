@@ -1,17 +1,25 @@
 #include "Company.h"
-#include "exceptions.h"
 #include <iostream>
+
+Company::Company(int company_id,int value) : companyId(company_id),value(value),employee_count(0) {
+    workersId = nullptr;
+    workersSal = nullptr;
+    highest_earner=nullptr;
+}
 
 
 Result Company::AddEmployee(Employee* emp){
     try{
-    this->workersId = insertNode(emp->EmployeeId, emp,this->workersId);
-    this->workersSal=insertNode(emp->salary, emp,this->workersSal);
-    }catch(InvalidInput){
+    this->workersId = insertNode(emp->EmployeeId, emp, this->workersId);
+    this->workersSal = insertNode(emp->salary, emp, this->workersSal);
+    }catch(InvalidInput const&){
         return INVALID_INPUT;
     }
-    catch(NodeAlreadyExists){
+    catch(NodeAlreadyExists const&){
         return ALREADY_EXIST;
+    }
+    catch(std::bad_alloc const&){
+        return ALLOCATION_ERROR;
     }
     if(this->highest_earner==nullptr)
     {
@@ -57,7 +65,7 @@ void Company::CompanyInfo(int* v,int* c)
     *v=this->value;
     *c=this->employee_count;
 }
-static void printTreeInternal(AVLTree<int,Employee*>* root, std::string indent, bool last) {
+static void printTreeInternal(AVLTree<int,Employee*>* root, std::string indent, bool last) { //TODO delete
     if (root != nullptr) {
         std::cout << indent;
         if (last) {

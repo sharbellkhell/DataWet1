@@ -182,9 +182,9 @@ AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,V
     if(root == nullptr){
         return init(key, value);
     }
-    if(key <= 0 || value == nullptr){
-        throw InvalidInput();
-    }
+    //if(key <= 0 || value == nullptr){  //TODO UNCOMMENT
+    //    throw InvalidInput();
+    //}
     if(findNode(root, key) != nullptr){
         throw NodeAlreadyExists();
     }
@@ -313,17 +313,17 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
  */
 template<class Key, class Value>
 void arrayInOrder(AVLTree<Key,Value>* starting_point, int* index,
-                  AVLTree<Key,Value>** arr){
-    if(starting_point == nullptr){
+                  AVLTree<Key,Value>** arr, int arr_size){
+    if(starting_point == nullptr || *index >= arr_size){
         return;
     }
     // Call left first
-    arrayInOrder(starting_point->left, index, arr);
+    arrayInOrder(starting_point->left, index, arr, arr_size);
     // Store root
     arr[*index] = starting_point;
     // Call right last with incremented index
     (*index)++;
-    arrayInOrder(starting_point->right, index, arr);
+    arrayInOrder(starting_point->right, index, arr, arr_size);
 }
 
 /*
@@ -342,19 +342,26 @@ AVLTree<Key, Value>** mergeTwoSortedArrays(AVLTree<Key, Value>** array_a,
     int merged_index = 0;
     while(a_index < a_size && b_index < b_size){
         if(array_a[a_index]->key < array_b[b_index]->key){
-            merged_array[merged_index++] = array_a[a_index++];
+            merged_array[merged_index] = array_a[a_index];
+            a_index++;
         }
         else{
-            merged_array[merged_index++] = array_b[b_index++];
+            merged_array[merged_index] = array_b[b_index];
+            b_index++;
         }
+        merged_index++;
     }
     // if there's elements left in array_a
     while(a_index < a_size){
-        merged_array[merged_index++] == array_a[a_index++];
+        merged_array[merged_index] = array_a[a_index];
+        merged_index++;
+        a_index++;
     }
     // if there's elements left in array_b
     while(b_index < b_size){
-        merged_array[merged_index++] == array_b[b_index++];
+        merged_array[merged_index] = array_b[b_index];
+        merged_index++;
+        b_index++;
     }
     return merged_array;
 }
@@ -367,21 +374,26 @@ template<class Key, class Value>
 AVLTree<Key, Value>* convertArrayToAVL(AVLTree<Key, Value>** arr,
                                        int start_point,
                                        int end_point){
-
     // We take the middle element of the array and place it as root
     int root_index = (start_point + end_point) / 2;
+    if (root_index < start_point || root_index >= end_point) {
+        return nullptr;
+    }
     AVLTree<Key,Value>* root = init<Key,Value>(arr[root_index]->key,
                                                arr[root_index]->value);
     // Use the lower-half of the array to build the left of root
     root->left = convertArrayToAVL(arr, start_point, root_index - 1);
-    root->left->parent = root;
+    if(root->left != nullptr){
+        root->left->parent = root;
+    }
     // Use the upper-half of the array to build the right of root
     root->right = convertArrayToAVL(arr, root_index + 1, end_point);
-    root->right->parent = root;
+    if(root->right != nullptr){
+        root->right->parent = root;
+    }
 
     return root;
 }
-
 
 template<class Key, class Value>
 AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* tree_b,
@@ -391,21 +403,24 @@ AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* t
     AVLTree<Key, Value>** array_b = new AVLTree<Key, Value>*[b_size];
     int* a_index = new int(0);
     int* b_index = new int(0);
-    arrayInOrder(tree_a, a_index, array_a);
-    arrayInOrder(tree_b, b_index, array_b);
+    arrayInOrder(tree_a, a_index, array_a, a_size);
+    arrayInOrder(tree_b, b_index, array_b, b_size);
+    delete a_index;
+    delete b_index;
     AVLTree<Key, Value>** merged_array = mergeTwoSortedArrays(array_a, array_b, a_size, b_size);
     // mergeTwoSortedArrays Allocates memory for merged_array,
     // meaning we can free what we allocated above
-    free(array_a); free(array_b); free(a_index); free(b_index);
     AVLTree<Key,Value>* result_AVL = convertArrayToAVL(merged_array, 0, a_size+b_size);
-    free(merged_array);
+    delete[] array_a;
+    delete[] array_b;
+    delete [] merged_array;
     return result_AVL;
 }
 
 template<class Key,class Value>
 void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
 {
-    if(root==nullptr)
+    if(root == nullptr)
         return; 
     highest_to_lowest(root->right,keys,total_keys);
     (*keys)[*total_keys]=(root->key);

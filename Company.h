@@ -1,13 +1,14 @@
 #ifndef COMPANY_H_
 #define COMPANY_H_
-#include "AVLTree.h"
 #include "Employee.h"
+#include "AVLTree.h"
 
 typedef enum {
     SUCCESS = 0,
     ALREADY_EXIST=1,
     DOES_NOT_EXIST=2,
-    INVALID_INPUT=3
+    INVALID_INPUT=3,
+    ALLOCATION_ERROR
 } Result;
 
 class Company{
@@ -18,11 +19,7 @@ class Company{
         int value;
         int employee_count;
         Employee* highest_earner;
-        Company(int company_id,int value) : companyId(company_id),value(value),employee_count(0) {
-        workersId = nullptr;
-        workersSal = nullptr;
-        highest_earner=nullptr;
-        }
+        Company(int company_id,int value);
         ~Company() = default;
         Result AddEmployee(Employee* emp);
         Result RemoveEmployeeByID(const int employee_id);
