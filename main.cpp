@@ -161,6 +161,24 @@ int main() {
     intel.CompanyInfo(v,c);
     intel.RemoveEmployeeByID(320);
     std::cout<<*v<<" "<<*c;
+    int* ids=new int[intel.employee_count];
+    int** idss=&ids;
+    ids[1]=100;
+    int count=0;
+    int* cc=&count;
+    intel.PrintEmployees();
+    highest_to_lowest(intel.workersId,idss,cc);
+    for(int i=0;i<intel.employee_count;i++)
+    {
+        std::cout<<ids[i]<<" ";
+    }
+    count=0;
+    lowest_to_highest(intel.workersId,idss,cc);
+    for(int i=0;i<intel.employee_count;i++)
+    {
+        std::cout<<ids[i]<<" ";
+    }
+    delete[] ids;
     return 0;
 
 

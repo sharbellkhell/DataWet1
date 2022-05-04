@@ -57,6 +57,29 @@ void Company::CompanyInfo(int* v,int* c)
     *v=this->value;
     *c=this->employee_count;
 }
+static void printTreeInternal(AVLTree<int,Employee*>* root, std::string indent, bool last) {
+    if (root != nullptr) {
+        std::cout << indent;
+        if (last) {
+            std::cout << "R----";
+            indent += "   ";
+        } else {
+            std::cout << "L----";
+            indent += "|  ";
+        }
+        std::cout << root->key << std::endl;
+        printTreeInternal(root->left, indent, false);
+        printTreeInternal(root->right, indent, true);
+    }
+}
+
+void Company::PrintEmployees() const
+{   
+    std::cout<<this->companyId<<"'s workers: \n ID: \n";
+    printTreeInternal(this->workersId, "", true);
+     std::cout<<"Salaries: \n";
+    printTreeInternal(this->workersSal, "", true);
+}
 
 void Company::setValue(const int value)
 {

@@ -28,6 +28,7 @@ class Company{
         Result RemoveEmployeeByID(const int employee_id);
         void CompanyInfo(int* value,int* num_of_employee);
         void setValue(const int value);
+        void PrintEmployees()const;
 };
 
 #endif

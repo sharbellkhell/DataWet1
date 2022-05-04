@@ -402,7 +402,26 @@ AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* t
     return result_AVL;
 }
 
-
+template<class Key,class Value>
+void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
+{
+    if(root==nullptr)
+        return; 
+    highest_to_lowest(root->right,keys,total_keys);
+    (*keys)[*total_keys]=(root->key);
+    *total_keys=*total_keys+1;
+    highest_to_lowest(root->left,keys,total_keys);
+}
+template<class Key,class Value>
+void lowest_to_highest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
+{
+    if(root==nullptr)
+        return; 
+    lowest_to_highest(root->left,keys,total_keys);
+    (*keys)[*total_keys]=(root->key);
+    *total_keys=*total_keys+1;
+    lowest_to_highest(root->right,keys,total_keys);
+}
 template<class Key,class Value>
 void Quit(AVLTree<Key,Value>* root){
     if(root == nullptr){

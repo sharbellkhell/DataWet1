@@ -12,6 +12,7 @@ class Workplace{
         AVLTree<int, Employee*>* employeeID;
         AVLTree<int, Employee*>* employeeSAL;
         AVLTree<int, Company*>* nonEmptyCompanies;
+        int employee_count;
         Workplace();
         ~Workplace();
 };
