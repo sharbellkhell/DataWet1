@@ -15,7 +15,7 @@ class Company{
     public:
         int companyId;
         AVLTree<int,Employee*>* workersId;
-        AVLTree<int,Employee*>* workersSal;
+        AVLTree<int,AVLTree<int,Employee*>*>* workersSal;
         int value;
         int employee_count;
         Employee* highest_earner;
