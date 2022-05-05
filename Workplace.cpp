@@ -23,20 +23,21 @@ StatusType Workplace::AddCompanyToWorkplace(int id,int val)
     }
     return SUCCESS;
 }
-static void insertDuplicateNode(int sal,Employee* emp,AVLTree<int,AVLTree<int,Employee*>*>* root)
+static AVLTree<int,AVLTree<int,Employee*>*>* insertDuplicate(int sal,Employee* emp,AVLTree<int,AVLTree<int,Employee*>*>* root)
 {
     AVLTree<int,AVLTree<int,Employee*>*>* temp=findNode(root,sal);
     if(temp==nullptr)
     {
-        AVLTree<int, Employee*>* sal_Range=insertNode(emp->EmployeeId,emp,sal_Range);
+        AVLTree<int, Employee*>* sal_Range=init(emp->EmployeeId,emp);
         root=insertNode(sal,sal_Range,root);
     }
     else{
         temp->value=insertNode(emp->EmployeeId,emp,temp->value);
     }
+    return root;
 }
 
-static void removeDuplicateNode(int sal,int emp_id,AVLTree<int,AVLTree<int,Employee*>*>* root)
+static void removeDuplicate(int sal,int emp_id,AVLTree<int,AVLTree<int,Employee*>*>* root)
 {
     AVLTree<int,AVLTree<int,Employee*>*>* temp=findNode(root,sal);
     temp->value=removeNode(temp->value,emp_id);
@@ -52,15 +53,20 @@ StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int 
         return ALLOCATION_ERROR;
     try{
     this->employeeID=insertNode(emp_id,emp,this->employeeID);
-    insertDuplicateNode(sal,emp,this->employeeSAL);
+    this->employeeSAL=insertDuplicate(sal,emp,this->employeeSAL);
     }catch(NodeAlreadyExists)
     {
         return FAILURE;
     }
-    Result res=temp->value->AddEmployee(emp);
-    if(res==ALREADY_EXIST)
+    StatusType res=temp->value->AddEmployee(emp);
+    if(res==FAILURE)
         return FAILURE;
-    this->nonEmptyCompanies=insertNode(comp_id,temp->value,this->nonEmptyCompanies);
+    AVLTree<int,Company*>* nonTemp=findNode(this->nonEmptyCompanies,comp_id);
+    if(nonTemp==nullptr)
+        this->nonEmptyCompanies=insertNode(comp_id,temp->value,this->nonEmptyCompanies);
+    else
+        nonTemp->value->AddEmployee(emp);
+    this->employee_count++;
     return SUCCESS;
 }
 
@@ -69,9 +75,14 @@ StatusType Workplace::RemoveEmployeeFromWorkplace(int emp_id)
     AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
     if(temp==nullptr)
         return FAILURE;
-    Employee* to_remove=temp->value;
-    removeDuplicateNode(to_remove->salary,to_remove->EmployeeId,this->employeeSAL);
     AVLTree<int,Company*>* comp=findNode(this->companies,temp->value->EmployerId);
-
+    if(comp==nullptr)
+        return FAILURE;
+    Employee* to_remove=temp->value;
+    removeDuplicate(to_remove->salary,to_remove->EmployeeId,this->employeeSAL);
+    this->employeeID=removeNode(this->employeeID,emp_id);
+    comp->value->RemoveEmployeeByID(emp_id);
+    this->employee_count--;
+    return SUCCESS;
 }
         

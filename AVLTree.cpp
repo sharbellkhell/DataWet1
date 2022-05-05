@@ -301,6 +301,8 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
             }
             fixUpwardPath(to_remove, Delete);
             new_root = getRoot(to_remove);
+            if(new_root==to_remove)
+                new_root=nullptr;
             free(to_remove);
             break; //TODO memory isn't being freed
     }

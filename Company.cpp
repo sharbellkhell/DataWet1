@@ -23,7 +23,7 @@ static AVLTree<int,AVLTree<int,Employee*>*>* insertDuplicateNode(int sal,Employe
 
 }
 
-Result Company::AddEmployee(Employee* emp){
+StatusType Company::AddEmployee(Employee* emp){
     try{
     this->workersId = insertNode(emp->EmployeeId, emp, this->workersId);
     this->workersSal = insertDuplicateNode(emp->salary, emp, this->workersSal);
@@ -31,7 +31,7 @@ Result Company::AddEmployee(Employee* emp){
         return INVALID_INPUT;
     }
     catch(NodeAlreadyExists const&){
-        return ALREADY_EXIST;
+        return FAILURE;
     }
     catch(std::bad_alloc const&){
         return ALLOCATION_ERROR;
@@ -70,11 +70,11 @@ static void removeDuplicateNode(int sal,int emp_id,AVLTree<int,AVLTree<int,Emplo
     if(temp!=nullptr)
         temp->value=removeNode(temp->value,emp_id);
 }
-Result Company::RemoveEmployeeByID(const int employee_id)
+StatusType Company::RemoveEmployeeByID(const int employee_id)
 {
     AVLTree<int,Employee*>* employee = findNode(this->workersId,employee_id);
     if(employee == nullptr)
-        return DOES_NOT_EXIST;
+        return FAILURE;
     int sal_to_remove=employee->value->salary;
     this->workersId=removeNode(this->workersId,employee_id);
     removeDuplicateNode(sal_to_remove,employee_id,this->workersSal);
