@@ -1,7 +1,6 @@
 #include "Workplace.h"
 #include "AVLTree.h"
 #include "Company.h"
-#include "Usefull.h"
 #include <ostream>
 
 Workplace::Workplace():employee_count(0){
