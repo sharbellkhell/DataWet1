@@ -1,14 +1,22 @@
 #include "AVLTree.h"
-#include "Auxilaries.h"
 #include <assert.h>
-#include <iostream>
 
 
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                             Constructing the AVL Tree
+  --------------------------------------------------------------------------------------------------------------------*/
+
+/*
+ * Constructor
+ */
 template<class Key, class Value>
 AVLTree<Key,Value>::AVLTree(const Key &key, const Value &value, AVLTree* parent)
  : key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0) {}
 
 
+ /*
+  * Function that fully initializes a Node, and links it with the rest of the Tree
+  */
 template<class Key, class Value>
 AVLTree<Key,Value>* init(const Key &key, const Value &value,
               SonType son_type, AVLTree<Key,Value>* parent){
@@ -28,11 +36,14 @@ AVLTree<Key,Value>* init(const Key &key, const Value &value,
     
 }
 
-template<class T> //TODO move function
-T max(T a, T b){
-    return (a>b ? a : b);
-}
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                   Functions to query a Node's Specifications
+  --------------------------------------------------------------------------------------------------------------------*/
 
+
+/*
+ * Returns How many and what children a node has.
+ */
 template<class Key, class Value>
 NodeChildren DoesNodeHaveChildren(AVLTree<Key,Value>* tree){
     if(tree->right == nullptr && tree->left == nullptr){
@@ -47,6 +58,9 @@ NodeChildren DoesNodeHaveChildren(AVLTree<Key,Value>* tree){
     return HasTwoSons;
 }
 
+/*
+ * Returns if Node is a Right, left son or a root.
+ */
 template<class Key,class Value>
 SonType whichSonIsNode(AVLTree<Key,Value>* node){
     if(node->parent == nullptr){
@@ -59,7 +73,14 @@ SonType whichSonIsNode(AVLTree<Key,Value>* node){
     }
 }
 
+template<class T>
+T max(T a, T b){
+    return (a>b ? a : b);
+}
 
+/*
+ * internal function that recursively calculates height
+ */
 template<class Key, class Value>
 int RecursiveCalcHeight(AVLTree<Key,Value>* node) {
     if(node == nullptr){
@@ -70,6 +91,9 @@ int RecursiveCalcHeight(AVLTree<Key,Value>* node) {
     return (max<int>(rightHeight, leftHeight) + 1);
 }
 
+/*
+ * Updates and returns node height
+ */
 template<class Key, class Value>
 int updateHeight(AVLTree<Key,Value>* node){
     if(node == nullptr) return -1;
@@ -77,13 +101,39 @@ int updateHeight(AVLTree<Key,Value>* node){
     return (node->height);
 }
 
+/*
+ * Calculates and returns Balance Factor
+ */
+template<class Key, class Value>
+int getBF( AVLTree<Key,Value>* node){
+    if(node == nullptr){
+        return 0;
+    }
+    return(updateHeight(node->left) - updateHeight(node->right) );
+
+}
+
+/*
+ * Returns root of a tree
+ */
+template<class Key, class Value>
+AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
+    if(node->parent == nullptr){
+        return node;
+    }
+    return (getRoot(node->parent));
+}
+
+
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                ROTATIONS
+  --------------------------------------------------------------------------------------------------------------------*/
 
 template<class Key,class Value>
 AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
     //The following two defs are needed to link nodes with outside tree after rotation
     AVLTree<Key,Value>* absolute_parent = A->parent;
     SonType absolute_son_type = whichSonIsNode(A);
-
     AVLTree<Key,Value>* B = A->right;
     assert(B); // if reached assert, we are performing illegal rotation
     AVLTree<Key,Value>* Bl = B->left;
@@ -109,7 +159,6 @@ AVLTree<Key,Value>* rotateLeft(AVLTree<Key,Value>* A){
         }
     }
     return B;
-    // TODO probably need to update heights
 }
 
 
@@ -128,7 +177,6 @@ AVLTree<Key,Value>* rotateRight(AVLTree<Key,Value>* B){
     if(Ar != nullptr){
         Ar->parent = B;
     }
-    // TODO probably need to update heights
     A->parent = absolute_parent;
     switch(absolute_son_type){
         case isLeft:{
@@ -145,6 +193,10 @@ AVLTree<Key,Value>* rotateRight(AVLTree<Key,Value>* B){
     return A;
 }
 
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                Tree Traversal
+  --------------------------------------------------------------------------------------------------------------------*/
+
 
 template<class Key,class Value>
 AVLTree<Key,Value>* findNode(AVLTree<Key,Value>* root , const Key& key){
@@ -159,54 +211,39 @@ AVLTree<Key,Value>* findNode(AVLTree<Key,Value>* root , const Key& key){
     return iterator_node;
 }
 
-
-template<class Key, class Value>
-int getBF( AVLTree<Key,Value>* node){
-    if(node == nullptr){
-        return 0;
-    } 
-    return(updateHeight(node->left) - updateHeight(node->right) );
-
-}
-
-template<class Key, class Value>
-AVLTree<Key,Value>* getRoot(AVLTree<Key,Value>* node){
-    if(node->parent == nullptr){
-        return node;
-    }
-    return (getRoot(node->parent));
+template<class Key,class Value>
+void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
+{
+    if(root == nullptr)
+        return;
+    highest_to_lowest(root->right,keys,total_keys);
+    (*keys)[*total_keys]=(root->key);
+    *total_keys=*total_keys+1;
+    highest_to_lowest(root->left,keys,total_keys);
 }
 
 template<class Key,class Value>
-AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root){
-    if(root == nullptr){
-        return init(key, value);
-    }
-    //if(key <= 0 || value == nullptr){  //TODO UNCOMMENT
-    //    throw InvalidInput();
-    //}
-    if(findNode(root, key) != nullptr){
-        throw NodeAlreadyExists();
-    }
-    AVLTree<Key,Value>* placement_pointer = root;
-    AVLTree<Key,Value>* parent = root->parent;
-    SonType son_type = SonType::root;
-    while(placement_pointer != nullptr && placement_pointer->key != key){
-        parent = placement_pointer;
-        if(placement_pointer->key < key ){
-            son_type = isRight;
-            placement_pointer = placement_pointer->right;
-        } else {
-            son_type = isLeft;
-            placement_pointer = placement_pointer->left;
-        }
-    }
-    AVLTree<Key,Value>* n1 = init(key, value, son_type, parent);
-    fixUpwardPath(n1, Insert);
-    return getRoot(n1);
+void lowest_to_highest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
+{
+    if(root==nullptr)
+        return;
+    lowest_to_highest(root->left,keys,total_keys);
+    (*keys)[*total_keys]=(root->key);
+    *total_keys=*total_keys+1;
+    lowest_to_highest(root->right,keys,total_keys);
 }
 
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                Insert Node
+  --------------------------------------------------------------------------------------------------------------------*/
 
+/*
+ * fixUpwardPath
+ * Performs the necessary rotations in the upward path from "node" to tree root
+ * if the function Insert; only one rotation is needed
+ * if the function is Delete; Rotations are needed along all the Upward path
+ * returns upmost node after fix
+ */
 template<class Key, class Value>
 void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
     while( node != nullptr ) {
@@ -237,6 +274,46 @@ void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
         node = node->parent;
     }
 }
+
+
+template<class Key,class Value>
+AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root){
+    if(root == nullptr){
+        return init(key, value);
+    }
+    if(key <= 0){
+        throw InvalidInput();
+    }
+
+//    if(value == nullptr){ //TODO UNCOMMENT
+//        throw InvalidInput();
+//    }
+
+    if(findNode(root, key) != nullptr){
+        throw NodeAlreadyExists();
+    }
+    AVLTree<Key,Value>* placement_pointer = root;
+    AVLTree<Key,Value>* parent = root->parent;
+    SonType son_type = SonType::root;
+    while(placement_pointer != nullptr && placement_pointer->key != key){
+        parent = placement_pointer;
+        if(placement_pointer->key < key ){
+            son_type = isRight;
+            placement_pointer = placement_pointer->right;
+        } else {
+            son_type = isLeft;
+            placement_pointer = placement_pointer->left;
+        }
+    }
+    AVLTree<Key,Value>* n1 = init(key, value, son_type, parent);
+    fixUpwardPath(n1, Insert);
+    return getRoot(n1);
+}
+
+
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                Remove Node
+  --------------------------------------------------------------------------------------------------------------------*/
 
 template<class Key,class Value>
 void swapData(AVLTree<Key,Value>* A, AVLTree<Key, Value>* B){
@@ -303,11 +380,17 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
             new_root = getRoot(to_remove);
             if(new_root==to_remove)
                 new_root=nullptr;
-            free(to_remove);
+            delete(to_remove);
             break; //TODO memory isn't being freed
     }
     return new_root;
 }
+
+
+
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                Merge Trees
+  --------------------------------------------------------------------------------------------------------------------*/
 
 /*
  * Converts AVL tree to a sorted array
@@ -337,7 +420,6 @@ AVLTree<Key, Value>** mergeTwoSortedArrays(AVLTree<Key, Value>** array_a,
                                            AVLTree<Key, Value>** array_b,
                                            int a_size, int b_size){
 
-    // TODO FREE AFTER
     AVLTree<Key, Value>** merged_array = new AVLTree<Key, Value>*[a_size+b_size];
     int a_index = 0;
     int b_index = 0;
@@ -419,26 +501,11 @@ AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* t
     return result_AVL;
 }
 
-template<class Key,class Value>
-void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
-{
-    if(root == nullptr)
-        return; 
-    highest_to_lowest(root->right,keys,total_keys);
-    (*keys)[*total_keys]=(root->key);
-    *total_keys=*total_keys+1;
-    highest_to_lowest(root->left,keys,total_keys);
-}
-template<class Key,class Value>
-void lowest_to_highest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
-{
-    if(root==nullptr)
-        return; 
-    lowest_to_highest(root->left,keys,total_keys);
-    (*keys)[*total_keys]=(root->key);
-    *total_keys=*total_keys+1;
-    lowest_to_highest(root->right,keys,total_keys);
-}
+
+/* --------------------------------------------------------------------------------------------------------------------
+ *                                                Quit.
+  --------------------------------------------------------------------------------------------------------------------*/
+
 template<class Key,class Value>
 void Quit(AVLTree<Key,Value>* root){
     if(root == nullptr){
