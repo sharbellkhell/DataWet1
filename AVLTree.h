@@ -91,7 +91,8 @@ AVLTree<Key, Value>* convertArrayToAVL(AVLTree<Key, Value>** arr,
                                        int end_point);
 
 template<class Key, class Value>
-AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>*, AVLTree<Key,Value>*);
+AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* tree_b,
+                               int a_size, int b_size);
 
 template<class Key,class Value>
 void highest_to_lowest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys);

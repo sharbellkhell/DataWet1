@@ -1,7 +1,11 @@
 #include <iostream>
 #include "AVLTree.cpp"
 #include "Company.h"
+#include "Company.cpp"
 #include "Employee.h"
+#include "Employee.cpp"
+#include "Workplace.h"
+#include "Workplace.cpp"
 #include <string>
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 #define NEWLINE std::cout << std::endl;
@@ -140,63 +144,22 @@ int main() {
     //isAVL(root);
     
     Quit(root);
-*/
-//    Company intel=Company(1,100);
-//    Employee sam=Employee(300,1,10000,1);
-//    Employee ben=Employee(305,1,11000,1);
-//    Employee alex=Employee(350,1,10001,1);
-//    Employee steve=Employee(320,1,12000,1);
-//    intel.AddEmployee(&sam);
-//    intel.AddEmployee(&ben);
-//    intel.AddEmployee(&alex);
-//    intel.AddEmployee(&steve);
-//    std::cout<<intel.highest_earner->EmployeeId<<" is the highest earner with "<<intel.highest_earner->salary<<"\n";
-//    int num1=0;
-//    int num2=0;
-//    int* v=&num1;
-//    int* c=&num2;
-//    intel.CompanyInfo(v,c);
-//    intel.RemoveEmployeeByID(320);
-//    std::cout<<*v<<" "<<*c;
-//    int* ids=new int[intel.employee_count];
-//    int** idss=&ids;
-//    int count=0;
-//    int* cc=&count;
-//    intel.PrintEmployees();
-//    highest_to_lowest(intel.workersId,idss,cc);
-//    for(int i=0;i<intel.employee_count;i++)
-//    {
-//        std::cout<<ids[i]<<" ";
-//    }
-//    count=0;
-//    lowest_to_highest(intel.workersId,idss,cc);
-//    for(int i=0;i<intel.employee_count;i++)
-//    {
-//        std::cout<<ids[i]<<" ";
-//    }
-//    delete[] ids;
-//    return 0;
 
+    Workplace haifa=Workplace();
+    haifa.AddCompanyToWorkplace(1,10000);
+    haifa.AddEmployeeToWorkplace(300,1,12000,1);
+    haifa.AddCompanyToWorkplace(2,200);
+    haifa.AddEmployeeToWorkplace(302,2,12000,1);
+    //haifa.AddEmployeeToWorkplace(305,1,11000,1);
+    //haifa.AddEmployeeToWorkplace(350,1,12000,1);
+    //haifa.AddEmployeeToWorkplace(320,1,12000,1);
+    haifa.AcquireCompany(1,2,1);
+    //haifa.IncreaseCompanyValue(1,100);
+    return 0;
+*/
     AVLTree<int,int>* root = insertNode(1, 1);
     root = insertNode(50,1,root);
     root = insertNode(100,1,root);
-    root = insertNode(99,1,root);
-    root = insertNode(102,1,root);
-    root = insertNode(2,1,root);
-    root = insertNode(103,1,root);
-    root = insertNode(104,1,root);
-    root = insertNode(11,1,root);
-    root = insertNode(105,1,root);
-    root = insertNode(106,1,root);
-    root = insertNode(107,1,root);
-    root = insertNode(7,1,root);
-    root = insertNode(108,1,root);
-    root = insertNode(109,1,root);
-    root = insertNode(110,1,root);
-    root = insertNode(10,1,root);
-    root= removeNode(root,103);
-    root= removeNode(root,2);
-    root= removeNode(root,104);
 
     AVLTree<int,int>* root2 = insertNode(14, 1);
     root2 = insertNode(5,1,root2);
@@ -212,8 +175,9 @@ int main() {
     PrintTree(root);
     std::cout<<"secondd\n";
     PrintTree(root2);
-    AVLTree<int,int>* merge=mergeTrees(root, root2, 13, 7);
+    AVLTree<int,int>* merge=mergeTrees(root, root2, 3, 7);
     std::cout<<"merged\n";
     PrintTree(merge);
+    
 }
 
