@@ -20,6 +20,11 @@ class Workplace{
         StatusType RemoveEmployeeFromWorkplace(int emp_id);
         StatusType RemoveCompanyFromWorkplace(int id);
         StatusType GetCompanyInfoFromWorkplace(int id, int* val,int *employee_count);
+        StatusType GetEmployeeInfo(int emp_id, int *employer_id, int *sal, int *grade);
+        StatusType IncreaseCompanyValue(int comp_id, int value_increase);
+        StatusType PromoteEmployee(int emp_id, int sal_increase, int bump);
+        StatusType HireEmployee(int emp_id, int new_comp_id);
+        StatusType AcquireCompany(int new_comp_id, int old_comp_id, double factor);
 };
 
 #endif

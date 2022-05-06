@@ -1,6 +1,7 @@
 #include "Workplace.h"
 #include "AVLTree.h"
 #include "Company.h"
+#include <cmath>
 #include <ostream>
 
 Workplace::Workplace():employee_count(0){
@@ -37,10 +38,13 @@ static AVLTree<int,AVLTree<int,Employee*>*>* insertDuplicate(int sal,Employee* e
     return root;
 }
 
-static void removeDuplicate(int sal,int emp_id,AVLTree<int,AVLTree<int,Employee*>*>* root)
+static AVLTree<int,AVLTree<int,Employee*>*>* removeDuplicate(int sal,int emp_id,AVLTree<int,AVLTree<int,Employee*>*>* root)
 {
     AVLTree<int,AVLTree<int,Employee*>*>* temp=findNode(root,sal);
     temp->value=removeNode(temp->value,emp_id);
+    if(temp->value==nullptr)
+        root=removeNode(root,sal);
+    return root;
 }
 
 StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int grade)
@@ -79,10 +83,90 @@ StatusType Workplace::RemoveEmployeeFromWorkplace(int emp_id)
     if(comp==nullptr)
         return FAILURE;
     Employee* to_remove=temp->value;
-    removeDuplicate(to_remove->salary,to_remove->EmployeeId,this->employeeSAL);
+    this->employeeSAL=removeDuplicate(to_remove->salary,to_remove->EmployeeId,this->employeeSAL);
     this->employeeID=removeNode(this->employeeID,emp_id);
     comp->value->RemoveEmployeeByID(emp_id);
     this->employee_count--;
+    if(comp->value->employee_count==0)
+    {
+        this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,comp->value->companyId);
+    }
     return SUCCESS;
 }
-        
+
+StatusType Workplace::RemoveCompanyFromWorkplace(int id){
+    AVLTree<int,Company*>* comp=findNode(this->companies,id);
+    if(comp->value->employee_count!=0)
+        return FAILURE;
+    this->companies=removeNode(this->companies,id);
+    return SUCCESS;
+}
+
+StatusType Workplace::GetCompanyInfoFromWorkplace(int id, int* val,int *employee_count)
+{
+    AVLTree<int,Company*>* comp=findNode(this->companies,id);
+    if(comp==nullptr)
+        return FAILURE;
+    *val=comp->value->value;
+    *employee_count=comp->value->employee_count;
+    return SUCCESS;
+}
+
+
+StatusType Workplace::GetEmployeeInfo(int emp_id, int *employer_id, int *sal, int *grade)
+{
+    AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
+    if(temp==nullptr)
+        return FAILURE;
+    *employer_id=temp->value->EmployerId;
+    *sal=temp->value->salary;
+    *grade=temp->value->grade;
+    return SUCCESS;
+}
+
+StatusType Workplace::IncreaseCompanyValue(int comp_id, int value_increase)
+{
+    AVLTree<int,Company*>* comp=findNode(this->companies,comp_id);
+    if(comp==nullptr)
+        return FAILURE;
+    comp->value->setValue(value_increase+comp->value->value);
+    return SUCCESS;
+}
+
+
+StatusType Workplace::PromoteEmployee(int emp_id, int sal_increase, int bump)
+{
+    AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
+    if(temp==nullptr)
+        return FAILURE;
+    temp->value->Promote(sal_increase,bump);
+    return SUCCESS;
+}
+
+StatusType Workplace::HireEmployee(int emp_id, int new_comp_id)
+{
+    AVLTree<int,Company*>* comp=findNode(this->companies,new_comp_id);
+    AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
+    if(comp==nullptr || temp==nullptr)
+        return FAILURE;
+    AVLTree<int,Company*>* old_comp=findNode(this->nonEmptyCompanies,temp->value->EmployerId);
+    old_comp->value->RemoveEmployeeByID(emp_id);
+    comp->value->AddEmployee(temp->value);
+    temp->value->EmployerId=new_comp_id;
+    return SUCCESS;
+}
+
+
+StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double factor)
+{
+    AVLTree<int,Company*>* new_comp=findNode(this->companies,new_comp_id);
+    AVLTree<int,Company*>* old_comp=findNode(this->companies,old_comp_id);
+    if(new_comp==nullptr || old_comp==nullptr || new_comp->value->value<10*old_comp->value->value)
+        return FAILURE;
+    new_comp->value->workersId=mergeTrees(new_comp->value->workersId,old_comp->value->workersId,new_comp->value->employee_count,old_comp->value->employee_count);
+    //replaces new_companies employees with old_company, basically dosent work
+    new_comp->value->setValue(floor((new_comp->value->value+old_comp->value->value)*factor));
+    this->RemoveCompanyFromWorkplace(old_comp_id);
+    return SUCCESS;
+
+}

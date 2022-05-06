@@ -60,6 +60,8 @@ static Employee* find_highest_earner(Company* company)
     while(temp->right!=nullptr)
         temp=temp->right;
     AVLTree<int,Employee*>* emp_temp=temp->value;
+    if(emp_temp==nullptr)
+        return nullptr;
     while(emp_temp->left!=nullptr)
         emp_temp=emp_temp->left;
     return emp_temp->value;
