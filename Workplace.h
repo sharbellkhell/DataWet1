@@ -31,6 +31,10 @@ class Workplace{
         StatusType GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count);
         StatusType GetHighestEarnerInEachCompany(int comp_count, int **emps);
         StatusType GetNumEmployeesMatching(int comp_id, int min_id, int max_id, int min_sal, int min_grade, int *total, int *count);
+
 };
+
+void releaseWorkers(AVLTree<int,Employee*>* root);
+void removeCompanies(AVLTree<int,Company*>* root);
 
 #endif
