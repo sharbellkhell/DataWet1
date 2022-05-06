@@ -12,9 +12,11 @@ class Workplace{
         AVLTree<int, Employee*>* employeeID;
         AVLTree<int, AVLTree<int,Employee*>*>* employeeSAL;
         AVLTree<int, Company*>* nonEmptyCompanies;
+        int non_empty_companies;
         int employee_count;
         Workplace();
         ~Workplace() = default;
+        void Quit();
         StatusType AddCompanyToWorkplace(int id,int val);
         StatusType AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int grade);
         StatusType RemoveEmployeeFromWorkplace(int emp_id);
@@ -27,6 +29,8 @@ class Workplace{
         StatusType AcquireCompany(int new_comp_id, int old_comp_id, double factor);
         StatusType GetHighestEarner(int comp_id, int* emp_id);
         StatusType GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count);
+        StatusType GetHighestEarnerInEachCompany(int comp_count, int **emps);
+        StatusType GetNumEmployeesMatching(int comp_id, int min_id, int max_id, int min_sal, int min_grade, int *total, int *count);
 };
 
 #endif

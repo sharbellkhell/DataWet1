@@ -4,7 +4,7 @@
 #include <cmath>
 #include <ostream>
 
-Workplace::Workplace():employee_count(0){
+Workplace::Workplace():employee_count(0),non_empty_companies(0){
     companies=nullptr;
     employeeID=nullptr;
     employeeSAL=nullptr;
@@ -66,8 +66,10 @@ StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int 
     if(res==FAILURE)
         return FAILURE;
     AVLTree<int,Company*>* nonTemp=findNode(this->nonEmptyCompanies,comp_id);
-    if(nonTemp==nullptr)
+    if(nonTemp==nullptr){
         this->nonEmptyCompanies=insertNode(comp_id,temp->value,this->nonEmptyCompanies);
+        this->non_empty_companies++;
+    }
     else
         nonTemp->value->AddEmployee(emp);
     this->employee_count++;
@@ -90,15 +92,25 @@ StatusType Workplace::RemoveEmployeeFromWorkplace(int emp_id)
     if(comp->value->employee_count==0)
     {
         this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,comp->value->companyId);
+        this->non_empty_companies--;
     }
     return SUCCESS;
 }
 
+static void updateWorkers(AVLTree<int,Employee*>* root, int id)
+{
+    if(root==nullptr)
+        return;
+    root->value->EmployerId=id;
+    updateWorkers(root->right,id);
+    updateWorkers(root->left,id);
+}
 StatusType Workplace::RemoveCompanyFromWorkplace(int id){
     AVLTree<int,Company*>* comp=findNode(this->companies,id);
     if(comp->value->employee_count!=0)
         return FAILURE;
     this->companies=removeNode(this->companies,id);
+    this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,id);
     return SUCCESS;
 }
 
@@ -166,6 +178,8 @@ StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double fa
     new_comp->value->workersId=mergeTrees(new_comp->value->workersId,old_comp->value->workersId,new_comp->value->employee_count,old_comp->value->employee_count);
     //replaces new_companies employees with old_company, basically dosent work
     new_comp->value->setValue(floor((new_comp->value->value+old_comp->value->value)*factor));
+    old_comp->value->employee_count=0;
+    updateWorkers(old_comp->value->workersId,new_comp_id);
     this->RemoveCompanyFromWorkplace(old_comp_id);
     return SUCCESS;
 
@@ -237,4 +251,85 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         return SUCCESS;
     }
     return FAILURE;
+}
+
+StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
+{
+    if(this->non_empty_companies<comp_count)
+        return FAILURE;
+    int* comps=new int[this->non_empty_companies];
+    int c=0;
+    int* p=&c;
+    lowest_to_highest(this->nonEmptyCompanies,&comps,p);
+    (*emps)=(int*) malloc(sizeof(int)*comp_count);
+    for(int i=0;i<comp_count;i++)
+    {
+        std::cout<<comps[i]<<" ";
+       // AVLTree<int,Company*>* temp=findNode(this->nonEmptyCompanies,comps[i]);
+        //(*emps)[i]=temp->value->highest_earner->EmployeeId;
+        int temp=0;
+        p=&temp;
+        this->GetHighestEarner(comps[i],p);
+        (*emps)[i]=temp;
+    }
+    delete[] comps;
+    return SUCCESS;
+}
+
+static void countCondition(AVLTree<int,Employee*>* root,int min_id, int max_id, int min_sal, int min_grade, int *total, int *count)
+{
+    if(root==nullptr)
+        return;
+    int id=root->value->EmployeeId;
+    if(id>=min_id && id<=max_id)
+    {
+        *total=*total+1;
+        int salary=root->value->salary;
+        int grade=root->value->grade;
+        if(salary>=min_sal && grade>=min_grade)
+            *count=*count+1;
+    }
+    countCondition(root->right,min_id,max_id,min_sal,min_grade,total,count);
+    countCondition(root->left,min_id,max_id,min_sal,min_grade,total,count);
+}
+StatusType Workplace::GetNumEmployeesMatching(int comp_id, int min_id, int max_id, int min_sal, int min_grade, int *total, int *count)
+{
+    if(comp_id>0)
+    {
+        AVLTree<int,Company*>* temp=findNode(this->nonEmptyCompanies,comp_id);
+        if(temp==nullptr)
+            return FAILURE;
+        countCondition(temp->value->workersId,min_id,max_id,min_sal,min_grade,total,count);
+        return SUCCESS;
+    }
+    if(comp_id<0)
+    {
+        if(this->employee_count==0)
+            return FAILURE;
+        countCondition(this->employeeID,min_id,max_id,min_sal,min_grade,total,count);
+        return SUCCESS;
+    }
+    return FAILURE;
+}
+
+static void releaseWorkers(AVLTree<int,Employee*>* root)
+{
+    if(root==nullptr)
+        return;
+    delete root->value;
+    releaseWorkers(root->right);
+    releaseWorkers(root->left);
+}
+static void removeCompanies(AVLTree<int,Company*>* root)
+{
+    if(root==nullptr)
+        return;
+    delete root->value;
+    removeCompanies(root->right);
+    removeCompanies(root->left);
+}
+void Workplace::Quit()
+{
+    releaseWorkers(this->employeeID);
+    removeCompanies(this->companies);
 }
