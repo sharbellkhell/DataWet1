@@ -1,5 +1,6 @@
 #include "AVLTree.h"
 #include <assert.h>
+#include <iostream> //TODO delete after debug
 
 
 /* --------------------------------------------------------------------------------------------------------------------
@@ -392,6 +393,8 @@ AVLTree<Key,Value>* removeNode(AVLTree<Key,Value>* root, const Key& key){
  *                                                Merge Trees
   --------------------------------------------------------------------------------------------------------------------*/
 
+
+
 /*
  * Converts AVL tree to a sorted array
  * Assumes array is allocated
@@ -460,7 +463,7 @@ AVLTree<Key, Value>* convertArrayToAVL(AVLTree<Key, Value>** arr,
                                        int end_point){
     // We take the middle element of the array and place it as root
     int root_index = (start_point + end_point) / 2;
-    if (root_index < start_point || root_index >= end_point) {
+    if (start_point > end_point || !arr[root_index]) {
         return nullptr;
     }
     AVLTree<Key,Value>* root = init<Key,Value>(arr[root_index]->key,
@@ -494,7 +497,7 @@ AVLTree<Key,Value>* mergeTrees(AVLTree<Key,Value>* tree_a, AVLTree<Key,Value>* t
     AVLTree<Key, Value>** merged_array = mergeTwoSortedArrays(array_a, array_b, a_size, b_size);
     // mergeTwoSortedArrays Allocates memory for merged_array,
     // meaning we can free what we allocated above
-    AVLTree<Key,Value>* result_AVL = convertArrayToAVL(merged_array, 0, a_size+b_size);
+    AVLTree<Key,Value>* result_AVL = convertArrayToAVL(merged_array, 0, a_size+b_size-1);
     delete[] array_a;
     delete[] array_b;
     delete [] merged_array;
