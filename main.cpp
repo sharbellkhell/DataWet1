@@ -212,7 +212,7 @@ int main() {
     PrintTree(root);
     std::cout<<"secondd\n";
     PrintTree(root2);
-    AVLTree<int,int>* merge=mergeTrees(root, root2, 14, 7); //was 13
+    AVLTree<int,int>* merge=mergeTrees(root, root2, 13, 7);
     std::cout<<"merged\n";
     PrintTree(merge);
 }

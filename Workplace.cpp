@@ -17,7 +17,7 @@ StatusType Workplace::AddCompanyToWorkplace(int id,int val)
         return ALLOCATION_ERROR;
     try{
     this->companies=insertNode(id, cmp,this->companies);
-    }catch(NodeAlreadyExists const&)
+    }catch(NodeAlreadyExists)
     {
         return FAILURE;
     }
@@ -54,7 +54,7 @@ StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int 
     try{
     this->employeeID=insertNode(emp_id,emp,this->employeeID);
     this->employeeSAL=insertDuplicate(sal,emp,this->employeeSAL);
-    }catch(NodeAlreadyExists const&)
+    }catch(NodeAlreadyExists)
     {
         return FAILURE;
     }
