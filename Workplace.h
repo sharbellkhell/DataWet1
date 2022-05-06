@@ -25,6 +25,8 @@ class Workplace{
         StatusType PromoteEmployee(int emp_id, int sal_increase, int bump);
         StatusType HireEmployee(int emp_id, int new_comp_id);
         StatusType AcquireCompany(int new_comp_id, int old_comp_id, double factor);
+        StatusType GetHighestEarner(int comp_id, int* emp_id);
+        StatusType GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count);
 };
 
 #endif

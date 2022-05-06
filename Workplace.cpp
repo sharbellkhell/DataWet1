@@ -158,7 +158,7 @@ StatusType Workplace::HireEmployee(int emp_id, int new_comp_id)
 
 
 StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double factor)
-{
+{//unfinished
     AVLTree<int,Company*>* new_comp=findNode(this->companies,new_comp_id);
     AVLTree<int,Company*>* old_comp=findNode(this->companies,old_comp_id);
     if(new_comp==nullptr || old_comp==nullptr || new_comp->value->value<10*old_comp->value->value)
@@ -169,4 +169,72 @@ StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double fa
     this->RemoveCompanyFromWorkplace(old_comp_id);
     return SUCCESS;
 
+}
+
+StatusType Workplace::GetHighestEarner(int comp_id, int* emp_id)
+{
+    if(comp_id>0)
+    {
+        AVLTree<int,Company*>* comp=findNode(this->companies,comp_id);
+        if(comp==nullptr)
+            return FAILURE;
+        *emp_id=comp->value->highest_earner->EmployeeId;
+        return SUCCESS;
+    }
+    if(comp_id<0)
+    {
+        AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
+        if(sals==nullptr)
+            return FAILURE;
+        while(sals->right!=nullptr)
+            sals=sals->right;
+        AVLTree<int,Employee*>* emps=sals->value;
+        while(emps->left!=nullptr)
+            emps=emps->left;
+        *emp_id=emps->value->EmployeeId;
+        return SUCCESS;
+    }
+    return FAILURE;
+}
+
+static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int* count)
+{
+    if(sals==nullptr)
+        return;
+    inInsert(sals->right,emps,count);
+    AVLTree<int,Employee*>* temp = sals->value;
+    lowest_to_highest(temp,emps,count);
+    inInsert(sals->left,emps,count);
+}
+
+StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
+{
+    if(comp_id>0)
+    {
+        AVLTree<int,Company*>* comp=findNode(this->companies,comp_id);
+        if(comp==nullptr)
+            return FAILURE;
+        int* emp=new int[comp->value->employee_count];
+        if(emp=NULL)
+            return ALLOCATION_ERROR;
+        int count=0;
+        int* p=&count;
+        AVLTree<int, AVLTree<int,Employee*>*>* sals=comp->value->workersSal;
+        inInsert(sals,emps,p);
+        *emp_count=comp->value->employee_count;
+        return SUCCESS;
+    }
+    if(comp_id<0)
+    {
+        int* emp=new int[this->employee_count];
+        if(emp=NULL)
+            return ALLOCATION_ERROR;
+        int count=0;
+        int* p=&count;
+        AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
+        inInsert(sals,emps,p);
+        *emp_count=this->employee_count;
+        return SUCCESS;
+    }
+    return FAILURE;
 }
