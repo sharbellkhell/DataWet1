@@ -288,7 +288,7 @@ static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int*
     inInsert(sals->left,emps,count);
 }
 
-StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int *emps, int emp_count)
+StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
 {
     if(comp_id == 0 || emps == nullptr || emp_count == nullptr){
         return INVALID_INPUT;
