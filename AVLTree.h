@@ -1,4 +1,7 @@
+#ifndef AVLTREE_H
+#define AVLTREE_H
 #include <assert.h>
+#include "exceptions.h"
 
 enum SonType {isLeft, isRight, root};
 enum NodeChildren {Leaf, HasLeftSon, HasRightSon, HasTwoSons};
@@ -18,7 +21,8 @@ struct AVLTree {
     }
     AVLTree(const Key &key,
             const Value &value,
-            AVLTree* parent = nullptr);
+            AVLTree* parent = nullptr)  :
+            key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0) {}
 
 
 };
@@ -27,20 +31,15 @@ struct AVLTree {
  *                                             Constructing the AVL Tree
   --------------------------------------------------------------------------------------------------------------------*/
 
-/*
- * Constructor
- */
-template<class Key, class Value>
-AVLTree<Key,Value>::AVLTree(const Key &key, const Value &value, AVLTree* parent)
- : key(key) , value(value) , parent(parent) , left(nullptr) , right(nullptr), height(0) {}
-
 
  /*
   * Function that fully initializes a Node, and links it with the rest of the Tree
   */
 template<class Key, class Value>
-AVLTree<Key,Value>* init(const Key &key, const Value &value,
-              SonType son_type, AVLTree<Key,Value>* parent){
+ AVLTree<Key,Value>* init(const Key &key,
+                          const Value &value,
+                          SonType son_type = root,
+                          AVLTree<Key,Value>* parent = nullptr){
 
     AVLTree<Key,Value>* n1 = new AVLTree<Key,Value>(key, value, parent);
     switch (son_type) {
@@ -298,7 +297,7 @@ void fixUpwardPath(AVLTree<Key,Value>* node, Function function) {
 
 
 template<class Key,class Value>
-AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root){
+AVLTree<Key,Value>* insertNode(const Key& key, const Value& value, AVLTree<Key,Value>* root = nullptr){
     if(root == nullptr){
         return init(key, value);
     }
@@ -537,6 +536,8 @@ void Quit(AVLTree<Key,Value>* root){
     free(root);
 }
 
+
+#endif
 
 
 
