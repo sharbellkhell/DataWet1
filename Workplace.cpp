@@ -121,6 +121,7 @@ StatusType Workplace::RemoveEmployeeFromWorkplace(int emp_id)
         this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,comp->value->companyId);
         this->non_empty_companies_count--;
     }
+    delete(to_remove);
     return SUCCESS;
 }
 
@@ -142,8 +143,8 @@ StatusType Workplace::RemoveCompanyFromWorkplace(int id){
     }
     if(comp->value->employee_count!=0)
         return FAILURE;
-    this->companies=removeNode(this->companies,id);
     delete comp->value;
+    this->companies=removeNode(this->companies,id);
     return SUCCESS;
 }
 
@@ -196,7 +197,12 @@ StatusType Workplace::PromoteEmployee(int emp_id, int sal_increase, int bump)
     AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
     if(temp==nullptr)
         return FAILURE;
+    AVLTree<int,Company*>* temp_comp=findNode(this->nonEmptyCompanies,temp->value->EmployerId);
+    this->employeeSAL=removeDuplicate(temp->value->salary,emp_id,this->employeeSAL);
+    temp_comp->value->workersSal=removeDuplicate(temp->value->salary,emp_id,temp_comp->value->workersSal);
     temp->value->Promote(sal_increase,bump);
+    this->employeeSAL=insertDuplicate(temp->value->salary,temp->value,this->employeeSAL);
+    temp_comp->value->workersSal=insertDuplicate(temp->value->salary,temp->value,temp_comp->value->workersSal);
     return SUCCESS;
 }
 
@@ -209,10 +215,11 @@ StatusType Workplace::HireEmployee(int emp_id, int new_comp_id)
     AVLTree<int,Employee*>* temp=findNode(this->employeeID,emp_id);
     if(comp==nullptr || temp==nullptr)
         return FAILURE;
-    AVLTree<int,Company*>* old_comp=findNode(this->nonEmptyCompanies,temp->value->EmployerId);
-    old_comp->value->RemoveEmployeeByID(emp_id);
-    comp->value->AddEmployee(temp->value);
-    temp->value->EmployerId=new_comp_id;
+    int id=emp_id;
+    int sal=temp->value->salary;
+    int grade=temp->value->grade;
+    this->RemoveEmployeeFromWorkplace(emp_id);
+    this->AddEmployeeToWorkplace(id,new_comp_id,sal,grade);
     return SUCCESS;
 }
 
@@ -222,15 +229,29 @@ StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double fa
     if(new_comp_id <= 0 || old_comp_id <= 0 || factor < 1.00 || new_comp_id == old_comp_id){
         return INVALID_INPUT;
     }
+    /*int total=new_comp->value->employee_count+old_comp->value->employee_count;
+    new_comp->value->workersId=mergeTrees(new_comp->value->workersId,old_comp->value->workersId,new_comp->value->employee_count,old_comp->value->employee_count);
+    new_comp->value->workersSal=mergeTrees(new_comp->value->workersSal,old_comp->value->workersSal,new_comp->value->employee_count,old_comp->value->employee_count);
+    
+    //replaces new_companies employees with old_company, basically dosent work //TODO
+    new_comp->value->setValue(floor((new_comp->value->value+old_comp->value->value)*factor));
+    updateWorkers(old_comp->value->workersId,new_comp_id);
+    new_comp->value->employee_count=total;
+
+    this->RemoveCompanyFromWorkplace(old_comp_id);*/
     AVLTree<int,Company*>* new_comp=findNode(this->companies,new_comp_id);
     AVLTree<int,Company*>* old_comp=findNode(this->companies,old_comp_id);
     if(new_comp==nullptr || old_comp==nullptr || new_comp->value->value<10*old_comp->value->value)
         return FAILURE;
-    new_comp->value->workersId=mergeTrees(new_comp->value->workersId,old_comp->value->workersId,new_comp->value->employee_count,old_comp->value->employee_count);
-    //replaces new_companies employees with old_company, basically dosent work //TODO
+    int* emps=new int[old_comp->value->employee_count];
+    int count=0;
+    int* p = &count;
+    lowest_to_highest(old_comp->value->workersId,&emps,p);
+    for(int i=0;i<count;i++){
+        this->HireEmployee(emps[i],new_comp_id);
+    }
+    delete[] emps;
     new_comp->value->setValue(floor((new_comp->value->value+old_comp->value->value)*factor));
-    old_comp->value->employee_count=0;
-    updateWorkers(old_comp->value->workersId,new_comp_id);
     this->RemoveCompanyFromWorkplace(old_comp_id);
     return SUCCESS;
 
@@ -277,7 +298,7 @@ static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int*
 
 StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
 {
-    if(comp_id == 0 || emps == NULL || emp_count == NULL){
+     if(comp_id == 0 || emps == NULL || emp_count == NULL){
         return INVALID_INPUT;
     }
     if(comp_id>0)

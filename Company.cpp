@@ -94,8 +94,11 @@ StatusType Company::RemoveEmployeeByID(const int employee_id)
     int sal_to_remove=employee->value->salary;
     this->workersId=removeNode(this->workersId,employee_id);
     removeDuplicateNode(sal_to_remove,employee_id,this->workersSal);
+    if(this->highest_earner!=nullptr)
+    {
     if(this->highest_earner->EmployeeId==employee_id)
         this->highest_earner=find_highest_earner(this);
+    }
     this->employee_count--;
     return SUCCESS;
 }
