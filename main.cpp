@@ -1,5 +1,5 @@
 #include <iostream>
-#include "AVLTree.cpp"
+#include "AVLTree.h"
 #include "Company.h"
 #include "Company.cpp"
 #include "Employee.h"
