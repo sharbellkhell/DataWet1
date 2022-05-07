@@ -2,6 +2,7 @@
 
 enum SonType {isLeft, isRight, root};
 enum NodeChildren {Leaf, HasLeftSon, HasRightSon, HasTwoSons};
+enum Function {Delete, Insert};
 
 template<class Key, class Value>
 struct AVLTree {
