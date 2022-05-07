@@ -326,6 +326,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
     return FAILURE;
 }
 
+
 StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
 {
     if(comp_count < 1 || emps == nullptr){
@@ -351,22 +352,28 @@ StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
     return SUCCESS;
 }
 
-static void countCondition(AVLTree<int,Employee*>* root,int min_id, int max_id, int min_sal, int min_grade, int *total, int *count)
-{
-    if(root==nullptr)
+
+void satisfyConditions(AVLTree<int,Employee*>* root, int* NumCondition1, int* NumCondition2,
+                       int min_id, int max_id, int min_sal, int min_grade){
+    if(root = nullptr){
         return;
-    int id=root->value->EmployeeId;
-    if(id>=min_id && id<=max_id)
-    {
-        *total=*total+1;
-        int salary=root->value->salary;
-        int grade=root->value->grade;
-        if(salary>=min_sal && grade>=min_grade)
-            *count=*count+1;
     }
-    countCondition(root->right,min_id,max_id,min_sal,min_grade,total,count);
-    countCondition(root->left,min_id,max_id,min_sal,min_grade,total,count);
+    else if (root->value->EmployeeId >= min_id && root->value->EmployeeId <= max_id) {
+        (*NumCondition1)++;
+        if(root->value->salary >= min_sal && root->value->grade >= min_grade){// satisfies salary and grade conditions
+            (*NumCondition2)++;
+        }
+        satisfyConditions(root->left, NumCondition1, NumCondition2, min_id, max_id, min_sal, min_grade);
+        satisfyConditions(root->right, NumCondition1, NumCondition2, min_id, max_id, min_sal, min_grade);
+    } // IS INSIDE ID RANGE
+    else if(root->value->EmployeeId > min_id && root->value->EmployeeId > max_id){
+        satisfyConditions(root->left, NumCondition1, NumCondition2, min_id, max_id, min_sal, min_grade);
+    }
+    else{
+        satisfyConditions(root->right, NumCondition1, NumCondition2, min_id, max_id, min_sal, min_grade);
+    }
 }
+
 StatusType Workplace::GetNumEmployeesMatching(int comp_id, int min_id, int max_id, int min_sal, int min_grade,
                                               int *total, int *count)
 {
@@ -378,14 +385,25 @@ StatusType Workplace::GetNumEmployeesMatching(int comp_id, int min_id, int max_i
         AVLTree<int,Company*>* temp=findNode(this->nonEmptyCompanies,comp_id);
         if(temp==nullptr)
             return FAILURE;
-        countCondition(temp->value->workersId,min_id,max_id,min_sal,min_grade,total,count);
+        int* NumCondition1 = new int(0);
+        int* NumCondition2 = new int(0);
+        satisfyConditions(temp->value->workersId,NumCondition1,NumCondition2,min_id,max_id,min_sal,min_grade);
+        (*total) = (*NumCondition1);
+        (*count) = (*NumCondition2);
+        delete NumCondition1; delete NumCondition2;
         return SUCCESS;
     }
     if(comp_id<0)
     {
         if(this->employee_count==0)
             return FAILURE;
-        countCondition(this->employeeID,min_id,max_id,min_sal,min_grade,total,count);
+
+        int* NumCondition1 = new int(0);
+        int* NumCondition2 = new int(0);
+        satisfyConditions(this->employeeID,NumCondition1,NumCondition2,min_id,max_id,min_sal,min_grade);
+        (*total) = *(NumCondition1);
+        (*count) = *(NumCondition2);
+        delete NumCondition1; delete NumCondition2;
         return SUCCESS;
     }
     return FAILURE;
