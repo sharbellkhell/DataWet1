@@ -212,6 +212,14 @@ StatusType Workplace::PromoteEmployee(int emp_id, int sal_increase, int bump)
     this->employeeSAL=removeDuplicate(temp->value->salary,emp_id,this->employeeSAL);
     temp_comp->value->workersSal=removeDuplicate(temp->value->salary,emp_id,temp_comp->value->workersSal);
     temp->value->Promote(sal_increase,bump);
+    if(this->highest_earner->salary<temp->value->salary)
+    {
+        this->highest_earner=temp->value;
+    }
+    else if(this->highest_earner->salary==temp->value->salary && this->highest_earner->EmployeeId > temp->value->EmployeeId)
+    {
+        this->highest_earner=temp->value;
+    }
     this->employeeSAL=insertDuplicate(temp->value->salary,temp->value,this->employeeSAL);
     temp_comp->value->workersSal=insertDuplicate(temp->value->salary,temp->value,temp_comp->value->workersSal);
     return SUCCESS;
@@ -268,12 +276,15 @@ StatusType Workplace::GetHighestEarner(int comp_id, int* emp_id)
         AVLTree<int,Company*>* comp=findNode(this->companies,comp_id);
         if(comp==nullptr)
             return FAILURE;
+        if(comp->value->employee_count==0)
+            return FAILURE;
         *emp_id=comp->value->highest_earner->EmployeeId;
         return SUCCESS;
     }
     if(comp_id<0)
     {
         *emp_id=this->highest_earner->EmployeeId;
+        return SUCCESS;
     }
     return FAILURE;
 }
@@ -299,7 +310,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         if(comp==nullptr)
             return FAILURE;
         try{
-            (*emps) = new int[comp->value->employee_count];
+            (*emps)=(int*) malloc(sizeof(int)*comp->value->employee_count);
         }
         catch(std::bad_alloc const &){
             return ALLOCATION_ERROR;
@@ -313,15 +324,16 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
     }
     if(comp_id<0)
     {
+        if(this->employee_count==0)
+            return FAILURE;
          try{
-            (*emps) = new int[this->employee_count];
+            (*emps)=(int*) malloc(sizeof(int)*this->employee_count);
         }
         catch(std::bad_alloc const &){
             return ALLOCATION_ERROR;
         }
         AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
         inInsert(sals,emps,emp_count);
-        *emp_count=this->employee_count;
         return SUCCESS;
     }
     return FAILURE;

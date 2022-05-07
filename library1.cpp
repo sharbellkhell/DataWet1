@@ -8,7 +8,7 @@ void* Init(){
 }
 
 StatusType AddCompany(void *DS, int CompanyID, int Value){
-    if(DS == nullptr){
+    if(DS == nullptr || CompanyID<=0 || Value<=0){
         return INVALID_INPUT;
     }
     return ((Workplace*)DS)->AddCompanyToWorkplace(CompanyID,Value);

@@ -246,6 +246,7 @@ void lowest_to_highest(AVLTree<Key,Value*>* root, Key** keys,int* total_keys)
     if(root==nullptr)
         return;
     lowest_to_highest(root->left,keys,total_keys);
+    std::cout<<*total_keys<<"\n";
     (*keys)[*total_keys]=(root->key);
     *total_keys=*total_keys+1;
     lowest_to_highest(root->right,keys,total_keys);
