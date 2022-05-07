@@ -15,6 +15,7 @@ class Workplace{
         AVLTree<int, Company*>* nonEmptyCompanies;
         int non_empty_companies_count;
         int employee_count;
+        Employee* highest_earner;
         Workplace();
         ~Workplace() = default;
         void QuitWorkplace();

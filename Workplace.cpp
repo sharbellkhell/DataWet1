@@ -97,6 +97,16 @@ StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int 
     else
         nonTemp->value->AddEmployee(emp);
     this->employee_count++;
+    if(this->highest_earner==nullptr)
+        this->highest_earner=emp;
+    else if(this->highest_earner->salary<emp->salary)
+    {
+        this->highest_earner=emp;
+    }
+    else if(this->highest_earner->salary==emp->salary && this->highest_earner->EmployeeId > emp->EmployeeId)
+    {
+        this->highest_earner=emp;
+    }
     return SUCCESS;
 }
 
@@ -229,16 +239,6 @@ StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double fa
     if(new_comp_id <= 0 || old_comp_id <= 0 || factor < 1.00 || new_comp_id == old_comp_id){
         return INVALID_INPUT;
     }
-    /*int total=new_comp->value->employee_count+old_comp->value->employee_count;
-    new_comp->value->workersId=mergeTrees(new_comp->value->workersId,old_comp->value->workersId,new_comp->value->employee_count,old_comp->value->employee_count);
-    new_comp->value->workersSal=mergeTrees(new_comp->value->workersSal,old_comp->value->workersSal,new_comp->value->employee_count,old_comp->value->employee_count);
-    
-    //replaces new_companies employees with old_company, basically dosent work //TODO
-    new_comp->value->setValue(floor((new_comp->value->value+old_comp->value->value)*factor));
-    updateWorkers(old_comp->value->workersId,new_comp_id);
-    new_comp->value->employee_count=total;
-
-    this->RemoveCompanyFromWorkplace(old_comp_id);*/
     AVLTree<int,Company*>* new_comp=findNode(this->companies,new_comp_id);
     AVLTree<int,Company*>* old_comp=findNode(this->companies,old_comp_id);
     if(new_comp==nullptr || old_comp==nullptr || new_comp->value->value<10*old_comp->value->value)
@@ -272,16 +272,7 @@ StatusType Workplace::GetHighestEarner(int comp_id, int* emp_id)
     }
     if(comp_id<0)
     {
-        AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
-        if(sals==nullptr)
-            return FAILURE;
-        while(sals->right!=nullptr)
-            sals=sals->right;
-        AVLTree<int,Employee*>* emps=sals->value;
-        while(emps->left!=nullptr)
-            emps=emps->left;
-        *emp_id=emps->value->EmployeeId;
-        return SUCCESS;
+        *emp_id=this->highest_earner->EmployeeId;
     }
     return FAILURE;
 }
@@ -298,7 +289,7 @@ static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int*
 
 StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
 {
-     if(comp_id == 0 || emps == NULL || emp_count == NULL){
+    if(comp_id == 0 || emps == NULL || emp_count == NULL){
         return INVALID_INPUT;
     }
     if(comp_id>0)
@@ -306,9 +297,12 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         AVLTree<int,Company*>* comp=findNode(this->companies,comp_id);
         if(comp==nullptr)
             return FAILURE;
-        int* emp=new int[comp->value->employee_count];
-        if(emp==NULL)
+        try{
+            (*emps) = new int[comp->value->employee_count];
+        }
+        catch(std::bad_alloc const &){
             return ALLOCATION_ERROR;
+        }
         int count=0;
         int* p=&count;
         AVLTree<int, AVLTree<int,Employee*>*>* sals=comp->value->workersSal;
