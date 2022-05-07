@@ -1,6 +1,7 @@
 #ifndef AVLTREE_EXCEPTIONS_H
 #define AVLTREE_EXCEPTIONS_H
 #include <exception>
+#include <iostream>
 
 class NodeAlreadyExists : public std::exception{
 };

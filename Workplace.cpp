@@ -1,10 +1,13 @@
+#include <iostream>
 #include "Workplace.h"
 #include "AVLTree.h"
 #include "Company.h"
 #include <cmath>
-#include <ostream>
 
-Workplace::Workplace():employee_count(0),non_empty_companies(0){
+
+Workplace::Workplace(){
+    employee_count=0;
+    non_empty_companies_count=0;
     companies=nullptr;
     employeeID=nullptr;
     employeeSAL=nullptr;
@@ -89,7 +92,7 @@ StatusType Workplace::AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int 
     AVLTree<int,Company*>* nonTemp=findNode(this->nonEmptyCompanies,comp_id);
     if(nonTemp==nullptr){
         this->nonEmptyCompanies=insertNode(comp_id,temp->value,this->nonEmptyCompanies);
-        this->non_empty_companies++;
+        this->non_empty_companies_count++;
     }
     else
         nonTemp->value->AddEmployee(emp);
@@ -116,7 +119,7 @@ StatusType Workplace::RemoveEmployeeFromWorkplace(int emp_id)
     if(comp->value->employee_count==0)
     {
         this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,comp->value->companyId);
-        this->non_empty_companies--;
+        this->non_empty_companies_count--;
     }
     return SUCCESS;
 }
@@ -140,7 +143,7 @@ StatusType Workplace::RemoveCompanyFromWorkplace(int id){
     if(comp->value->employee_count!=0)
         return FAILURE;
     this->companies=removeNode(this->companies,id);
-    this->nonEmptyCompanies=removeNode(this->nonEmptyCompanies,id);
+    delete comp->value;
     return SUCCESS;
 }
 
@@ -283,7 +286,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         if(comp==nullptr)
             return FAILURE;
         int* emp=new int[comp->value->employee_count];
-        if(emp=NULL)
+        if(emp==NULL)
             return ALLOCATION_ERROR;
         int count=0;
         int* p=&count;
@@ -295,7 +298,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
     if(comp_id<0)
     {
         int* emp=new int[this->employee_count];
-        if(emp=NULL)
+        if(emp==NULL)
             return ALLOCATION_ERROR;
         int count=0;
         int* p=&count;
@@ -312,16 +315,15 @@ StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
     if(comp_count < 1 || emps == NULL){
         return INVALID_INPUT;
     }
-    if(this->non_empty_companies<comp_count)
+    if(this->non_empty_companies_count<comp_count)
         return FAILURE;
-    int* comps=new int[this->non_empty_companies];
+    int* comps=new int[this->non_empty_companies_count];
     int c=0;
     int* p=&c;
     lowest_to_highest(this->nonEmptyCompanies,&comps,p);
     (*emps)=(int*) malloc(sizeof(int)*comp_count);
     for(int i=0;i<comp_count;i++)
     {
-        std::cout<<comps[i]<<" ";
        // AVLTree<int,Company*>* temp=findNode(this->nonEmptyCompanies,comps[i]);
         //(*emps)[i]=temp->value->highest_earner->EmployeeId;
         int temp=0;
@@ -373,6 +375,15 @@ StatusType Workplace::GetNumEmployeesMatching(int comp_id, int min_id, int max_i
     return FAILURE;
 }
 
+void releaseFromSal(AVLTree<int, AVLTree<int,Employee*>*>* root)
+{
+    if(root==nullptr)
+        return;
+    Quit(root->value);
+    releaseFromSal(root->right);
+    releaseFromSal(root->left);
+    
+}
 void releaseWorkers(AVLTree<int,Employee*>* root)
 {
     if(root==nullptr)
@@ -389,8 +400,14 @@ void removeCompanies(AVLTree<int,Company*>* root)
     removeCompanies(root->right);
     removeCompanies(root->left);
 }
-//void Workplace::Quit()
-//{
-//    releaseWorkers(this->employeeID);
-//    removeCompanies(this->companies);
-//}
+
+void Workplace::QuitWorkplace()
+{
+    removeCompanies(this->companies);
+    releaseWorkers(this->employeeID);
+    releaseFromSal(this->employeeSAL);
+    Quit(this->employeeID);
+    Quit(this->employeeSAL);
+    Quit(this->companies);
+    Quit(this->nonEmptyCompanies);
+}

@@ -16,8 +16,6 @@ struct AVLTree {
     AVLTree* right;
     int height;
     ~AVLTree(){
-        //delete(key); //TODO DTOR
-        //delete(value);
     }
     AVLTree(const Key &key,
             const Value &value,
@@ -533,7 +531,7 @@ void Quit(AVLTree<Key,Value>* root){
     }
     Quit(root->right);
     Quit(root->left);
-    free(root);
+    delete(root);
 }
 
 

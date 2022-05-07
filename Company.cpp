@@ -1,12 +1,26 @@
-#include "Company.h"
 #include <iostream>
+#include "library1.h"
+#include "Employee.h"
+#include "AVLTree.h"
+#include "Company.h"
 
 Company::Company(int company_id,int value) : companyId(company_id),value(value),employee_count(0) {
     workersId = nullptr;
     workersSal = nullptr;
     highest_earner=nullptr;
 }
-
+Company::~Company()
+{
+    int* emps=new int[this->employee_count];
+    int count=0;
+    int* p = &count;
+    lowest_to_highest(workersId,&emps,p);
+    for(int i=0;i<count;i++)
+        this->RemoveEmployeeByID(emps[i]);
+    Quit(workersId);
+    Quit(workersSal);
+    delete[] emps;
+}
 static AVLTree<int,AVLTree<int,Employee*>*>* insertDuplicateNode(int sal,Employee* emp,AVLTree<int,AVLTree<int,Employee*>*>* root)
 {
     AVLTree<int,AVLTree<int,Employee*>*>* temp=findNode(root,sal);

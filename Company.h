@@ -1,5 +1,6 @@
 #ifndef COMPANY_H_
 #define COMPANY_H_
+#include <iostream>
 #include "library1.h"
 #include "Employee.h"
 #include "AVLTree.h"
@@ -21,7 +22,7 @@ class Company{
         int employee_count;
         Employee* highest_earner;
         Company(int company_id,int value);
-        ~Company() = default;
+        ~Company();
         StatusType AddEmployee(Employee* emp);
         StatusType RemoveEmployeeByID(const int employee_id);
         void CompanyInfo(int* value,int* num_of_employee);

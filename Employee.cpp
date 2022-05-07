@@ -1,6 +1,6 @@
+#include <iostream>
 #include "Employee.h"
 #include "exceptions.h"
-#include <iostream>
 
 
 void Employee::EmployeeInfo(int* employerId, int* sal,int* grade)const{

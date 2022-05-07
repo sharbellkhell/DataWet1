@@ -1,11 +1,8 @@
 #include <iostream>
 #include "AVLTree.h"
-#include "Company.h"
-#include "Company.cpp"
 #include "Employee.h"
-#include "Employee.cpp"
+#include "Company.h"
 #include "Workplace.h"
-#include "Workplace.cpp"
 #include <string>
 #define WHATIS(this) std::cout << #this << ": " << this << std::endl;
 #define NEWLINE std::cout << std::endl;
@@ -145,16 +142,17 @@ int main() {
     
     Quit(root);
 
+    
     Workplace haifa=Workplace();
     haifa.AddCompanyToWorkplace(1,10000);
-    haifa.AddEmployeeToWorkplace(300,1,12000,1);
+    haifa.AddEmployeeToWorkplace(300,1,11000,1);
     haifa.AddCompanyToWorkplace(2,200);
     haifa.AddEmployeeToWorkplace(302,2,12000,1);
-    //haifa.AddEmployeeToWorkplace(305,1,11000,1);
-    //haifa.AddEmployeeToWorkplace(350,1,12000,1);
-    //haifa.AddEmployeeToWorkplace(320,1,12000,1);
+    haifa.AddEmployeeToWorkplace(305,1,11000,1);
+    haifa.AddEmployeeToWorkplace(350,1,12000,1);
+    haifa.AddEmployeeToWorkplace(320,1,12000,1);
     haifa.AcquireCompany(1,2,1);
-    //haifa.IncreaseCompanyValue(1,100);
+    haifa.QuitWorkplace();
     return 0;
 */
     AVLTree<int,int>* root = insertNode(1, 1);
@@ -175,9 +173,14 @@ int main() {
     PrintTree(root);
     std::cout<<"secondd\n";
     PrintTree(root2);
-    AVLTree<int,int>* merge=mergeTrees(root, root2, 3, 7);
+    Quit(root);
+    Quit(root2);
+    //AVLTree<int,int>* merge=mergeTrees(root, root2, 3, 7);
     std::cout<<"merged\n";
-    PrintTree(merge);
+    //PrintTree(merge);
+    //Quit(merge);
+   
+   return 0;
     
 }
 

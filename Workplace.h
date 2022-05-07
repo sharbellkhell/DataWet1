@@ -1,5 +1,6 @@
-#ifndef WORKPLACE_H
-#define WORKPLACE_H
+#ifndef WORKPLACE_H_
+#define WORKPLACE_H_
+#include <iostream>
 #include "AVLTree.h"
 #include "Employee.h"
 #include "Company.h"
@@ -12,11 +13,11 @@ class Workplace{
         AVLTree<int, Employee*>* employeeID;
         AVLTree<int, AVLTree<int,Employee*>*>* employeeSAL;
         AVLTree<int, Company*>* nonEmptyCompanies;
-        int non_empty_companies;
+        int non_empty_companies_count;
         int employee_count;
         Workplace();
         ~Workplace() = default;
-        void Quit();
+        void QuitWorkplace();
         StatusType AddCompanyToWorkplace(int id,int val);
         StatusType AddEmployeeToWorkplace(int emp_id,int comp_id,int sal,int grade);
         StatusType RemoveEmployeeFromWorkplace(int emp_id);
@@ -36,5 +37,5 @@ class Workplace{
 
 void releaseWorkers(AVLTree<int,Employee*>* root);
 void removeCompanies(AVLTree<int,Company*>* root);
-
+void releaseFromSal(AVLTree<int, AVLTree<int,Employee*>*>* root);
 #endif
