@@ -12,6 +12,7 @@ Workplace::Workplace(){
     employeeID=nullptr;
     employeeSAL=nullptr;
     nonEmptyCompanies=nullptr;
+    highest_earner= nullptr;
 }
 
 StatusType Workplace::AddCompanyToWorkplace(int id,int val)
