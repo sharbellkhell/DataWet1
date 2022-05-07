@@ -355,7 +355,7 @@ StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
 
 void satisfyConditions(AVLTree<int,Employee*>* root, int* NumCondition1, int* NumCondition2,
                        int min_id, int max_id, int min_sal, int min_grade){
-    if(root = nullptr){
+    if(root == nullptr){
         return;
     }
     else if (root->value->EmployeeId >= min_id && root->value->EmployeeId <= max_id) {
