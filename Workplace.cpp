@@ -288,7 +288,7 @@ static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int*
     inInsert(sals->left,emps,count);
 }
 
-StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
+StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int *emps, int emp_count)
 {
     if(comp_id == 0 || emps == nullptr || emp_count == nullptr){
         return INVALID_INPUT;
@@ -306,20 +306,21 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         }
         int count=0;
         int* p=&count;
-        AVLTree<int, AVLTree<int,Employee*>*>* sals=comp->value->workersSal;
+        AVLTree<int, AVLTree<int,Employee*>> sals=comp->value->workersSal;
         inInsert(sals,emps,p);
         *emp_count=comp->value->employee_count;
         return SUCCESS;
     }
     if(comp_id<0)
     {
-        int* emp=new int[this->employee_count];
-        if(emp==nullptr)
+         try{
+            (*emps) = new int[this->employee_count];
+        }
+        catch(std::bad_alloc const &){
             return ALLOCATION_ERROR;
-        int count=0;
-        int* p=&count;
-        AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
-        inInsert(sals,emps,p);
+        }
+        AVLTree<int, AVLTree<int,Employee*>> sals=this->employeeSAL;
+        inInsert(sals,emps,emp_count);
         *emp_count=this->employee_count;
         return SUCCESS;
     }
