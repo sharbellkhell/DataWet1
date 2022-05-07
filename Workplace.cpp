@@ -306,7 +306,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         }
         int count=0;
         int* p=&count;
-        AVLTree<int, AVLTree<int,Employee*>> sals=comp->value->workersSal;
+        AVLTree<int, AVLTree<int,Employee*>*>* sals=comp->value->workersSal;
         inInsert(sals,emps,p);
         *emp_count=comp->value->employee_count;
         return SUCCESS;
@@ -319,7 +319,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
         catch(std::bad_alloc const &){
             return ALLOCATION_ERROR;
         }
-        AVLTree<int, AVLTree<int,Employee*>> sals=this->employeeSAL;
+        AVLTree<int, AVLTree<int,Employee*>*>* sals=this->employeeSAL;
         inInsert(sals,emps,emp_count);
         *emp_count=this->employee_count;
         return SUCCESS;
@@ -356,7 +356,7 @@ StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
 
 void satisfyConditions(AVLTree<int,Employee*>* root, int* NumCondition1, int* NumCondition2,
                        int min_id, int max_id, int min_sal, int min_grade){
-    if(root == nullptr){
+    if(root = nullptr){
         return;
     }
     else if (root->value->EmployeeId >= min_id && root->value->EmployeeId <= max_id) {
