@@ -260,7 +260,7 @@ StatusType Workplace::AcquireCompany(int new_comp_id, int old_comp_id, double fa
 
 StatusType Workplace::GetHighestEarner(int comp_id, int* emp_id)
 {
-    if(comp_id == 0 || emp_id == NULL){
+    if(comp_id == 0 || emp_id == nullptr){
         return INVALID_INPUT;
     }
     if(comp_id>0)
@@ -290,7 +290,7 @@ static void inInsert(AVLTree<int, AVLTree<int,Employee*>*>* sals,int** emps,int*
 
 StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_count)
 {
-    if(comp_id == 0 || emps == NULL || emp_count == NULL){
+    if(comp_id == 0 || emps == nullptr || emp_count == nullptr){
         return INVALID_INPUT;
     }
     if(comp_id>0)
@@ -314,7 +314,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
     if(comp_id<0)
     {
         int* emp=new int[this->employee_count];
-        if(emp==NULL)
+        if(emp==nullptr)
             return ALLOCATION_ERROR;
         int count=0;
         int* p=&count;
@@ -328,7 +328,7 @@ StatusType Workplace::GetAllEmployeesBySalary(int comp_id, int **emps, int* emp_
 
 StatusType Workplace::GetHighestEarnerInEachCompany(int comp_count, int **emps)
 {
-    if(comp_count < 1 || emps == NULL){
+    if(comp_count < 1 || emps == nullptr){
         return INVALID_INPUT;
     }
     if(this->non_empty_companies_count<comp_count)
